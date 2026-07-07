@@ -1,0 +1,27 @@
+# Project Notes / Progress
+
+## Done
+- ER diagram (Lucidchart)
+- schema.sql — 14 tables, live on Render, in repo
+- sample_data.sql — 10+ rows per table, loaded
+- README.md
+- Functions written + tested + filed:
+  - browse_branches: fn_get_branches, fn_get_available_tables
+  - make_reservation: fn_create_reservation
+  - kitchen_view: fn_get_kitchen_orders
+
+## Next / To Do
+- Remaining functions (by screen):
+  - customer: view_menu, order_dishes, view_bill
+  - staff: manage_sessions (open/close), manage_menu, checkout, manage_promotions
+- Screenshots of customer screens
+- Figma wireframes for staff screens
+- Report (ER diagram, functions + example results, security & efficiency sections)
+- Presentation slides
+- (Bonus) web app
+
+## Notes to self
+- Functions are grouped by SCREEN, not by table (browse_branches = a screen, not a table)
+- Read functions = safe to re-run; write functions (create_reservation) add a row each run
+- Test rows I added manually (clean up later if needed): extra reservations, order_line id ~15
+- Efficiency angle: indexes on reservation(branch_id, slot_time) + order_line(session_id, status)
