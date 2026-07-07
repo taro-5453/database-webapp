@@ -4,7 +4,7 @@ A database system for a multi-branch all-you-can-eat shabu/sukiyaki
 restaurant chain, supporting reservations, queues, buffet dining
 sessions, ordering, billing, membership, and promotions.
 
-Course: [course name/code] — Term 2025-26 T3
+Course: ICCS 225 Database Foundations — Term 2025-26 T3
 
 ## Team
 - Chaiyanun Sakulsaowapakkul 6681299
