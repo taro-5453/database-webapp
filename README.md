@@ -8,8 +8,8 @@ Course: ICCS 225 Database Foundations — Term 2025-26 T3
 
 ## Team
 - Chaiyanun Sakulsaowapakkul 6681299
-- 
-- 
+- Sorawich Pimsen 6681297
+- Nathanon Chirattithphan 6780756
 
 ## Tech Stack
 - Database: PostgreSQL (hosted on Render)
