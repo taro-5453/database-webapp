@@ -15,6 +15,8 @@
 - Auth functions (written, still need testing on Render):
   - auth: fn_register_customer, fn_login_customer, fn_login_staff (bcrypt via pgcrypto)
   - schema.sql now enables pgcrypto; sample_data.sql passwords are all 'password123' (real bcrypt hashes)
+- Session management functions (written, still need testing on Render):
+  - manage_sessions: fn_open_session, fn_get_active_sessions
 
 ## Next / To Do
 - Remaining functions (by screen):
