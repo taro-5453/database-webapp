@@ -203,3 +203,119 @@ INSERT INTO point_transaction (membership_id, bill_id, change_amount, type, crea
 (3, 9,   7, 'earn',   '2026-07-08 18:55:00'),
 (2, NULL,-50,'redeem', '2026-07-08 22:00:00'),
 (4, NULL, 100,'earn',  '2026-07-01 10:00:00');
+
+
+
+
+-- ============================================================
+-- Momo Paradise - Sample Data ADDITION
+-- Adds menu items for branches 2-7 and assigns tier menus for
+-- tiers 3-10, so ordering works at every branch (not just branch 1).
+-- Run AFTER schema.sql and sample_data.sql.
+-- Branch 1 (tiers 1-2) already has items + tier menus, so it is
+-- not repeated here.
+-- ============================================================
+
+-- ---------- MENU_ITEM for branches 2-7 ----------
+-- Each branch gets the same core menu (basics priced 0 = buffet-included,
+-- drinks/desserts priced > 0 = extra charge). Premium items included so
+-- premium/deluxe tiers have something exclusive to unlock.
+
+-- Branch 2
+INSERT INTO menu_item (branch_id, name, category, price, available) VALUES
+(2, 'Pork Slices',         'meat',      0.00, TRUE),  -- 15
+(2, 'Beef Slices',         'meat',      0.00, TRUE),  -- 16
+(2, 'Premium Wagyu',       'meat',      0.00, TRUE),  -- 17
+(2, 'Shrimp',              'seafood',   0.00, TRUE),  -- 18
+(2, 'Salmon Slices',       'seafood',   0.00, TRUE),  -- 19
+(2, 'Enoki Mushroom',      'vegetable', 0.00, TRUE),  -- 20
+(2, 'Udon Noodles',        'noodle',    0.00, TRUE),  -- 21
+(2, 'Coca-Cola',           'drink',    39.00, TRUE),  -- 22
+(2, 'Green Tea Ice Cream', 'dessert',  49.00, TRUE);  -- 23
+
+-- Branch 3
+INSERT INTO menu_item (branch_id, name, category, price, available) VALUES
+(3, 'Pork Slices',         'meat',      0.00, TRUE),  -- 24
+(3, 'Beef Slices',         'meat',      0.00, TRUE),  -- 25
+(3, 'Premium Wagyu',       'meat',      0.00, TRUE),  -- 26
+(3, 'Foie Gras',           'meat',      0.00, TRUE),  -- 27  (deluxe exclusive)
+(3, 'Shrimp',              'seafood',   0.00, TRUE),  -- 28
+(3, 'Salmon Slices',       'seafood',   0.00, TRUE),  -- 29
+(3, 'Enoki Mushroom',      'vegetable', 0.00, TRUE),  -- 30
+(3, 'Udon Noodles',        'noodle',    0.00, TRUE),  -- 31
+(3, 'Coca-Cola',           'drink',    39.00, TRUE),  -- 32
+(3, 'Premium Sake',        'drink',   199.00, TRUE);  -- 33
+
+-- Branch 4
+INSERT INTO menu_item (branch_id, name, category, price, available) VALUES
+(4, 'Pork Slices',         'meat',      0.00, TRUE),  -- 34
+(4, 'Beef Slices',         'meat',      0.00, TRUE),  -- 35
+(4, 'Shrimp',              'seafood',   0.00, TRUE),  -- 36
+(4, 'Enoki Mushroom',      'vegetable', 0.00, TRUE),  -- 37
+(4, 'Udon Noodles',        'noodle',    0.00, TRUE),  -- 38
+(4, 'Coca-Cola',           'drink',    39.00, TRUE);  -- 39
+
+-- Branch 5
+INSERT INTO menu_item (branch_id, name, category, price, available) VALUES
+(5, 'Pork Slices',         'meat',      0.00, TRUE),  -- 40
+(5, 'Beef Slices',         'meat',      0.00, TRUE),  -- 41
+(5, 'Shrimp',              'seafood',   0.00, TRUE),  -- 42
+(5, 'Enoki Mushroom',      'vegetable', 0.00, TRUE),  -- 43
+(5, 'Udon Noodles',        'noodle',    0.00, TRUE),  -- 44
+(5, 'Coca-Cola',           'drink',    39.00, TRUE);  -- 45
+
+-- Branch 6
+INSERT INTO menu_item (branch_id, name, category, price, available) VALUES
+(6, 'Pork Slices',         'meat',      0.00, TRUE),  -- 46
+(6, 'Beef Slices',         'meat',      0.00, TRUE),  -- 47
+(6, 'Premium Wagyu',       'meat',      0.00, TRUE),  -- 48
+(6, 'Salmon Slices',       'seafood',   0.00, TRUE),  -- 49
+(6, 'Enoki Mushroom',      'vegetable', 0.00, TRUE),  -- 50
+(6, 'Udon Noodles',        'noodle',    0.00, TRUE),  -- 51
+(6, 'Premium Sake',        'drink',   199.00, TRUE);  -- 52
+
+-- Branch 7
+INSERT INTO menu_item (branch_id, name, category, price, available) VALUES
+(7, 'Pork Slices',         'meat',      0.00, TRUE),  -- 53
+(7, 'Beef Slices',         'meat',      0.00, TRUE),  -- 54
+(7, 'Shrimp',              'seafood',   0.00, TRUE),  -- 55
+(7, 'Enoki Mushroom',      'vegetable', 0.00, TRUE),  -- 56
+(7, 'Udon Noodles',        'noodle',    0.00, TRUE),  -- 57
+(7, 'Coca-Cola',           'drink',    39.00, TRUE);  -- 58
+
+
+-- ---------- TIER_MENU_ITEM assignments ----------
+-- Standard tiers: basic items (no wagyu/salmon/foie gras/sake).
+-- Premium/Deluxe tiers: everything at that branch.
+
+-- Branch 2: tier 3 = Standard, tier 4 = Premium
+-- Standard (tier 3): pork, beef, shrimp, enoki, udon, coke, ice cream
+INSERT INTO tier_menu_item (tier_id, item_id) VALUES
+(3, 15),(3, 16),(3, 18),(3, 20),(3, 21),(3, 22),(3, 23);
+-- Premium (tier 4): everything at branch 2 (adds wagyu 17, salmon 19)
+INSERT INTO tier_menu_item (tier_id, item_id) VALUES
+(4, 15),(4, 16),(4, 17),(4, 18),(4, 19),(4, 20),(4, 21),(4, 22),(4, 23);
+
+-- Branch 3: tier 5 = Standard, tier 6 = Deluxe
+-- Standard (tier 5): basics (no wagyu 26, foie gras 27, salmon 29, sake 33)
+INSERT INTO tier_menu_item (tier_id, item_id) VALUES
+(5, 24),(5, 25),(5, 28),(5, 30),(5, 31),(5, 32);
+-- Deluxe (tier 6): everything at branch 3
+INSERT INTO tier_menu_item (tier_id, item_id) VALUES
+(6, 24),(6, 25),(6, 26),(6, 27),(6, 28),(6, 29),(6, 30),(6, 31),(6, 32),(6, 33);
+
+-- Branch 4: tier 7 = Standard (only tier) -> all its items
+INSERT INTO tier_menu_item (tier_id, item_id) VALUES
+(7, 34),(7, 35),(7, 36),(7, 37),(7, 38),(7, 39);
+
+-- Branch 5: tier 8 = Standard (only tier) -> all its items
+INSERT INTO tier_menu_item (tier_id, item_id) VALUES
+(8, 40),(8, 41),(8, 42),(8, 43),(8, 44),(8, 45);
+
+-- Branch 6: tier 9 = Premium -> everything at branch 6 (incl wagyu 48, salmon 49, sake 52)
+INSERT INTO tier_menu_item (tier_id, item_id) VALUES
+(9, 46),(9, 47),(9, 48),(9, 49),(9, 50),(9, 51),(9, 52);
+
+-- Branch 7: tier 10 = Standard (only tier) -> all its items
+INSERT INTO tier_menu_item (tier_id, item_id) VALUES
+(10, 53),(10, 54),(10, 55),(10, 56),(10, 57),(10, 58);
