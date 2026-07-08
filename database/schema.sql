@@ -4,6 +4,10 @@
 -- Tables are created in dependency order so foreign keys resolve.
 -- ============================================================
 
+-- pgcrypto provides crypt() + gen_salt('bf') for bcrypt password
+-- hashing, used by the auth functions (function/auth/).
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- ---------- BRANCH ----------
 CREATE TABLE branch (
     branch_id   SERIAL PRIMARY KEY,
