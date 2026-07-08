@@ -8,12 +8,15 @@
 - Functions written + tested + filed:
   - browse_branches: fn_get_branches, fn_get_available_tables
   - make_reservation: fn_create_reservation
+  - membership: fn_get_membership, fn_get_point_history
+  - ordering: fn_get_tier_menu, fn_place_order, fn_get_session_orders
   - kitchen_view: fn_get_kitchen_orders
+  - checkout: fn_checkout (creates BILL, applies promotion, earns points, closes session, frees table)
 
 ## Next / To Do
 - Remaining functions (by screen):
-  - customer: view_menu, order_dishes, view_bill
-  - staff: manage_sessions (open/close), manage_menu, checkout, manage_promotions
+  - customer: view_bill
+  - staff: manage_sessions (open), manage_menu, manage_promotions
 - Screenshots of customer screens
 - Figma wireframes for staff screens
 - Report (ER diagram, functions + example results, security & efficiency sections)
