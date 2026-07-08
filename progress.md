@@ -12,6 +12,9 @@
   - ordering: fn_get_tier_menu, fn_place_order, fn_get_session_orders
   - kitchen_view: fn_get_kitchen_orders
   - checkout: fn_checkout (creates BILL, applies promotion, earns points, closes session, frees table)
+- Auth functions (written, still need testing on Render):
+  - auth: fn_register_customer, fn_login_customer, fn_login_staff (bcrypt via pgcrypto)
+  - schema.sql now enables pgcrypto; sample_data.sql passwords are all 'password123' (real bcrypt hashes)
 
 ## Next / To Do
 - Remaining functions (by screen):
