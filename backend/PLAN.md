@@ -88,13 +88,26 @@ Goal: the remaining staff CRUD, finishing the API surface.
 - Done when: order lifecycle (ordered→preparing→served) and a full
   checkout with a promotion code work via curl.
 
-## Phase 6 — Hardening + deploy
+## Phase 6 — Hardening + deploy  ✅ code DONE (smoke 14/14 under gunicorn)
 Goal: frontend-ready and live.
-- CORS (flask-cors) for the frontend origin, cookies with credentials
-- input validation pass (types/required fields → 422 before hitting the DB)
-- `script/smoke_api.sh`: curl-based happy-path check in verify.sh style
-- gunicorn + Render web service; env vars on Render (no .env in git)
-- Done when: deployed URL passes smoke_api.sh from your laptop.
+- ✅ CORS: FRONTEND_ORIGIN env (default http://localhost:3000),
+  credentials on; other origins get no CORS headers
+- ✅ input validation (done incrementally in phases 3-5: int/str/
+  bool/num field checks -> 400 before the DB is touched)
+- ✅ script/smoke_api.sh — works against any URL; staff checks with
+  SMOKE_STAFF_NAME/PASSWORD, cleans up after itself when DB_URL set
+- ✅ gunicorn (verified locally); JSON 404/405/500 handlers
+- ⬜ Render web service — dashboard steps:
+    1. New Web Service from this repo
+    2. Build command:  pip install -r backend/requirements.txt
+    3. Start command:  gunicorn --chdir backend wsgi:app --bind 0.0.0.0:$PORT
+    4. Env vars (Render dashboard, NOT .env — .env stays out of git):
+       MOMO_APP_URL     postgresql://momo_app:<pw>@<host>/momo_paradise?sslmode=require&channel_binding=disable
+       FLASK_SECRET_KEY (openssl rand -hex 32)
+       FRONTEND_ORIGIN  (the deployed frontend URL, once it exists)
+       COOKIE_CROSS_SITE=1  (only if frontend is on a different domain)
+    5. Done when:  ./script/smoke_api.sh https://<service>.onrender.com
+       passes from your laptop.
 
 ---
 Suggested order of attack: 0+1 together (auth is the foundation),

@@ -41,7 +41,8 @@ function/                  SQL functions, grouped by screen
 
 script/
 ├── deploy.sh              runs all SQL against a DB URL (see How to Run)
-└── verify.sh              checks the deploy: grants, bcrypt, momo_app lockout
+├── verify.sh              checks the deploy: grants, bcrypt, momo_app lockout
+└── smoke_api.sh           HTTP happy-path test of the backend API
 
 document/                  report and ER diagram
 backend/                   Flask API (phased plan in backend/PLAN.md)
@@ -82,3 +83,11 @@ Or manually in DataGrip, in this order: `database/schema.sql` →
 `database/security.sql` (re-run security.sql after adding any new
 function, and change the `momo_app` placeholder password before
 deploying).
+
+## Backend (Flask API)
+- Dev server: `backend/.venv/bin/python backend/wsgi.py` (port 5001)
+- Production: `gunicorn --chdir backend wsgi:app`
+- Config via repo-root `.env` (gitignored): `MOMO_APP_URL`,
+  `FLASK_SECRET_KEY`, optional `FRONTEND_ORIGIN`
+- Smoke test: `./script/smoke_api.sh [API_URL]`
+- Full endpoint list + Render deploy steps: `backend/PLAN.md`

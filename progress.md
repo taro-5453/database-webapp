@@ -73,7 +73,10 @@
   - Phase 5 DONE, tested live: kitchen view + order status lifecycle, menu add/availability,
     promotions create/list/validate, checkout with percent promo (bill math verified:
     798+88-132.90=753.10, 7 points earned, table freed, double-checkout rejected)
-  - API surface complete; next: Phase 6 (CORS, smoke_api.sh, gunicorn + Render deploy)
+  - Phase 6 code DONE: CORS (FRONTEND_ORIGIN env, credentials), JSON 404/405/500,
+    gunicorn verified, script/smoke_api.sh (14/14 locally; works against any URL)
+  - LAST STEP (manual): create Render Web Service — exact settings in backend/PLAN.md
+    Phase 6, then run ./script/smoke_api.sh https://<service>.onrender.com
   - note for report: fn_update_order_status / fn_update_item_availability trust staff on ids
     (no branch check on the id itself) — staff are semi-trusted internal users, UI only shows
     own-branch ids; customers CAN'T call these at all
