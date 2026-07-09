@@ -16,19 +16,46 @@ Course: ICCS 225 Database Foundations — Term 2025-26 T3
 - Tooling: DataGrip
 
 ## Repository Structure
-- `database/` — schema and sample data
-  - `schema.sql` — creates all 14 tables (keys, constraints, indexes)
-  - `sample_data.sql` — sample rows for every table
-- `function/` — SQL functions that feed each screen
-- `document/` — report and ER diagram
-- `UI Pages/` — screenshots and Figma wireframes
+```
+database/                  schema, sample data, security
+├── schema.sql             creates all 14 tables (keys, constraints, indexes) + pgcrypto
+├── sample_data.sql        sample rows for every table
+└── security.sql           EXECUTE-only momo_app role the web app connects as
+
+function/                  SQL functions, grouped by screen
+├── auth/                  fn_register_customer, fn_login_customer, fn_login_staff
+├── customer/
+│   ├── browse_branches/   fn_get_branches, fn_get_available_tables
+│   ├── make_reservation/  fn_create_reservation
+│   ├── ordering/          fn_get_tier_menu, fn_place_order, fn_get_session_orders
+│   ├── membership/        fn_get_membership, fn_get_point_history
+│   └── view_bill/         fn_get_current_bill
+└── staff/
+    ├── queue/             fn_get_queue, fn_seat_reservation
+    ├── manage_sessions/   fn_open_session, fn_get_active_sessions
+    ├── kitchen_view/      fn_get_kitchen_orders, fn_update_order_status
+    ├── manage_menu/       fn_add_menu_item, fn_update_item_availability
+    ├── manage_promotions/ fn_create_promotion, fn_get_promotions
+    └── checkout/          fn_validate_promotion, fn_checkout
+
+document/                  report and ER diagram
+backend/                   Flask API (planned)
+frontend/                  React Router / Next.js app (planned)
+progress.md                running task list / project notes
+```
 
 ## Database
 - 14 tables, normalized, with foreign keys and CHECK constraints
-- Security: passwords stored as hashes; least-privilege access
+- Security: passwords stored as bcrypt hashes (pgcrypto); the app
+  connects as an EXECUTE-only role (`momo_app`) with no direct
+  table access — everything goes through SECURITY DEFINER functions
 - Efficiency: indexes on frequently queried columns
 
 ## How to Run
 1. Create a PostgreSQL database (e.g. on Render).
 2. Run `database/schema.sql` to create the tables.
 3. Run `database/sample_data.sql` to populate sample data.
+4. Run every `function/**/*.sql` file to create the functions.
+5. Run `database/security.sql` to create the `momo_app` app role
+   (EXECUTE-only) — re-run it after adding any new function, and
+   change the placeholder password before deploying.
