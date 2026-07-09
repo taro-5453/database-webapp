@@ -34,6 +34,8 @@ function AuthStatus() {
         <>
           {" · "}
           <Link to="/profile">Profile</Link>
+          {" · "}
+          <Link to="/reserve">Reserve</Link>
         </>
       )}
       {" · "}

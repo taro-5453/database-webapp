@@ -7,4 +7,6 @@ export default [
   route("staff/login", "routes/staff-login.tsx"),
   route("branches/:id", "routes/branch-detail.tsx"),
   route("profile", "routes/profile.tsx"),
+  route("reserve", "routes/reserve.tsx"),
+  route("session/:id", "routes/dining-session.tsx"),
 ] satisfies RouteConfig;

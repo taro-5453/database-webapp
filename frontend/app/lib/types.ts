@@ -25,3 +25,35 @@ export type PointTransaction = {
   bill_id: number | null;
   created_at: string;
 };
+
+export type Reservation = {
+  reservation_id: number;
+  status: string;
+};
+
+export type MenuItem = {
+  item_id: number;
+  name: string;
+  category: string;
+  price: number;
+  available: boolean;
+};
+
+export type OrderLine = {
+  order_line_id: number;
+  item_name: string;
+  quantity: number;
+  unit_price: number;
+  line_total: number;
+  status: string;
+  ordered_at: string;
+};
+
+export type Bill = {
+  tier_id: number;
+  price_per_head: number;
+  guest_count: number;
+  buffet_total: number;
+  extra_charges: number;
+  running_total: number;
+};
