@@ -38,6 +38,10 @@ function/                  SQL functions, grouped by screen
     ├── manage_promotions/ fn_create_promotion, fn_get_promotions
     └── checkout/          fn_validate_promotion, fn_checkout
 
+script/
+├── deploy.sh              runs all SQL against a DB URL (see How to Run)
+└── verify.sh              checks the deploy: grants, bcrypt, momo_app lockout
+
 document/                  report and ER diagram
 backend/                   Flask API (planned)
 frontend/                  React Router / Next.js app (planned)
@@ -53,9 +57,25 @@ progress.md                running task list / project notes
 
 ## How to Run
 1. Create a PostgreSQL database (e.g. on Render).
-2. Run `database/schema.sql` to create the tables.
-3. Run `database/sample_data.sql` to populate sample data.
-4. Run every `function/**/*.sql` file to create the functions.
-5. Run `database/security.sql` to create the `momo_app` app role
-   (EXECUTE-only) — re-run it after adding any new function, and
-   change the placeholder password before deploying.
+2. First-time deploy (tables + sample data + functions + security):
+   ```sh
+   ./script/deploy.sh --schema --seed 'postgresql://user:pass@host.render.com/dbname'
+   ```
+3. After changing/adding functions, re-deploy just those:
+   ```sh
+   ./script/deploy.sh 'postgresql://user:pass@host.render.com/dbname'
+   ```
+   (needs `psql`; macOS: `brew install libpq && brew link --force libpq`)
+4. Verify the deploy (grants, registration/login, and — with a
+   password — that `momo_app` can call functions but not touch
+   tables). Self-contained: creates its own test rows and deletes
+   them afterwards, so it works with or without sample data:
+   ```sh
+   ./script/verify.sh 'postgresql://user:pass@host.render.com/dbname' 'new-momo-app-password'
+   ```
+
+Or manually in DataGrip, in this order: `database/schema.sql` →
+`database/sample_data.sql` → every `function/**/*.sql` →
+`database/security.sql` (re-run security.sql after adding any new
+function, and change the `momo_app` placeholder password before
+deploying).

@@ -24,14 +24,32 @@
   - manage_promotions: fn_create_promotion, fn_get_promotions
   - queue: fn_get_queue, fn_seat_reservation
   - fn_open_session updated: now also accepts a reservation pre-seated by fn_seat_reservation
-- database/security.sql (written, still need running on Render):
+- Deployed + verified on Render (verify.sh: 16/16 PASS): pgcrypto installed via security.sql,
+  24 fn_* granted, register/login work, momo_app lockout proven live
+  - Render gotcha: TLS proxy breaks SCRAM channel binding -> clients need channel_binding=disable
+    (verify.sh handles it; Flask's psycopg needs it too when connecting as momo_app)
+  - .env (gitignored) holds DB_URL + MOMO_APP_PASSWORD; deploy.sh/verify.sh read it automatically
+  - sample customers still have placeholder hashes (can't log in) — reset when needed:
+    UPDATE customer SET password_hash = crypt('password123', gen_salt('bf')); (same for staff)
+- database/security.sql (run on Render, verified):
   - momo_app role: LOGIN, EXECUTE-only, no table access; app/Flask connects as this
   - all fn_* become SECURITY DEFINER + pinned search_path (done via loop, re-run after adding functions)
   - revokes PUBLIC's default EXECUTE on functions + CREATE on schema public
   - report material: security section = bcrypt + least-privilege role + injection blast radius
 
+- verify.sh — post-deploy checks with PASS/FAIL output, self-contained (no sample_data dependency):
+  - creates 'ZZ Verify ...' fixture rows (branch/staff/item + customer via fn_register_customer),
+    deletes them at the end (trap-based cleanup + pre-clean of leftovers from aborted runs)
+  - admin: 24 grants present, register/login accept+reject; warns if old rows have placeholder hashes
+  - with momo_app password arg: sets it (SCRAM, kills the MD5 warning), connects AS momo_app,
+    proves tables are denied but functions work (write test toggles only the fixture item)
+- deploy.sh — one-command deploy to Render:
+  - ./script/deploy.sh --schema --seed "$DB_URL" for a fresh DB; ./script/deploy.sh "$DB_URL" to update functions + security
+  - example calls in all function files are now COMMENTED OUT (they used to be live SQL,
+    which would run/fail when executing whole files) — select + run them manually in DataGrip
+
 ## Next / To Do
-- Update add SQL functions to Render
+- Update add SQL functions to Render (can now use ./script/deploy.sh)
 - Remaining functions (by screen):
   -
 - Screenshots of customer screens
