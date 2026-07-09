@@ -66,7 +66,7 @@ Goal: the reserve → order → watch-the-bill flow.
 - Done when: full happy path via curl against a seeded session, and
   a not-in-tier order returns the RAISE message as a 400.
 
-## Phase 4 — Staff floor ops
+## Phase 4 — Staff floor ops  ✅ DONE (tested against Render)
 Goal: the queue → seat → open session → dashboard loop.
 - `GET  /api/staff/queue` → fn_get_queue (branch_id from staff cookie)
 - `POST /api/staff/reservations/<id>/seat` → fn_seat_reservation

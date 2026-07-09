@@ -34,9 +34,10 @@ def create_app() -> Flask:
 
     init_pool(os.environ["MOMO_APP_URL"])
 
-    from . import auth, customer
+    from . import auth, customer, staff
     app.register_blueprint(auth.bp)
     app.register_blueprint(customer.bp)
+    app.register_blueprint(staff.bp)
 
     @app.get("/api/health")
     def health():

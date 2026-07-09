@@ -67,7 +67,10 @@
   - Phase 3 DONE, tested live: POST /api/reservations (queue or timed), dining-session
     menu/orders/bill; new fn_get_session_owner (fn #25, verify.sh expects 25 now) gives
     403 on other customers' sessions, 404 on missing; DataError/IntegrityError -> 400
-  - next: Phase 4 (staff floor ops: queue, seat, open session, dashboard)
+  - Phase 4 DONE, tested live: staff queue/seat/open-session (walk-in AND pre-seated
+    paths)/dashboard; branch+staff ids from cookie only; wrong-branch tier + occupied
+    table + re-seat all rejected as 400s; int_field moved to app/util.py
+  - next: Phase 5 (staff kitchen, menu, promotions, checkout)
 - Frontend - React router or Next.js
 
 

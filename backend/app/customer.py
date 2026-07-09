@@ -12,19 +12,9 @@ from flask import Blueprint, jsonify, request, session
 
 from .auth import customer_required
 from .db import ApiError, call_fn, call_fn_scalar
+from .util import int_field
 
 bp = Blueprint("customer", __name__, url_prefix="/api")
-
-
-def _int_field(data: dict, name: str, required: bool = True):
-    value = data.get(name)
-    if value is None:
-        if required:
-            raise ApiError(400, f"{name} (integer) is required")
-        return None
-    if isinstance(value, bool) or not isinstance(value, int):
-        raise ApiError(400, f"{name} must be an integer")
-    return value
 
 
 def _owned_session(session_id: int) -> None:
@@ -70,9 +60,9 @@ def my_points():
 @customer_required
 def create_reservation():
     data = request.get_json(silent=True) or {}
-    branch_id = _int_field(data, "branch_id")
-    party_size = _int_field(data, "party_size")
-    table_id = _int_field(data, "table_id", required=False)
+    branch_id = int_field(data, "branch_id")
+    party_size = int_field(data, "party_size")
+    table_id = int_field(data, "table_id", required=False)
 
     slot_time = None  # NULL slot_time = join the walk-in queue
     if data.get("slot_time"):
@@ -101,8 +91,8 @@ def session_menu(session_id: int):
 def place_order(session_id: int):
     _owned_session(session_id)
     data = request.get_json(silent=True) or {}
-    item_id = _int_field(data, "item_id")
-    quantity = _int_field(data, "quantity")
+    item_id = int_field(data, "item_id")
+    quantity = int_field(data, "quantity")
     order_line_id = call_fn_scalar("fn_place_order", session_id, item_id, quantity)
     return jsonify({"order_line_id": order_line_id}), 201
 
