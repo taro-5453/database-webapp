@@ -1,12 +1,14 @@
+import { useEffect, useState } from "react";
 import type { Route } from "./+types/home";
 import { Link } from "react-router";
-import { Welcome } from "../welcome/welcome";
 import { useAuth } from "../lib/auth";
+import { api, ApiError } from "../lib/api";
+import type { Branch } from "../lib/types";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Momo Paradise" },
+    { name: "description", content: "Multi-branch all-you-can-eat shabu/sukiyaki" },
   ];
 }
 
@@ -28,19 +30,54 @@ function AuthStatus() {
   return (
     <p>
       Logged in as <strong>{user.name}</strong> ({user.kind})
+      {user.kind === "customer" && (
+        <>
+          {" · "}
+          <Link to="/profile">Profile</Link>
+        </>
+      )}
       {" · "}
       <button onClick={() => logout()}>Log out</button>
     </p>
   );
 }
 
+function BranchList() {
+  const [branches, setBranches] = useState<Branch[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    api
+      .get<Branch[]>("/api/branches")
+      .then(setBranches)
+      .catch((err) =>
+        setError(err instanceof ApiError ? err.message : "Failed to load branches"),
+      );
+  }, []);
+
+  if (error) return <p role="alert">{error}</p>;
+  if (!branches) return <p>Loading branches...</p>;
+
+  return (
+    <ul>
+      {branches.map((b) => (
+        <li key={b.branch_id}>
+          <Link to={`/branches/${b.branch_id}`}>{b.name}</Link>
+          <div>
+            {b.address} · {b.phone}
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function Home() {
   return (
-    <>
-      <div className="p-4 text-center">
-        <AuthStatus />
-      </div>
-      <Welcome />
-    </>
+    <main className="pt-16 p-4 container mx-auto">
+      <AuthStatus />
+      <h1>Branches</h1>
+      <BranchList />
+    </main>
   );
 }
