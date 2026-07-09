@@ -21,3 +21,6 @@ frontend/dist/
 
 # local DB credentials
 .env
+
+# Claude
+.claude

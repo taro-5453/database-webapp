@@ -55,7 +55,13 @@
 - Screenshots of customer screens
 - Report (ER diagram, functions + example results, security & efficiency sections)
 - Presentation slides
-- Backend - Flask
+- Backend - Flask (phased plan in backend/PLAN.md; do phase by phase)
+  - Phases 0+1 DONE, tested live: health + register/login/staff-login/logout/me,
+    cookie sessions, fn RAISE -> 400 JSON, empty login -> 401
+  - .env gained MOMO_APP_URL + FLASK_SECRET_KEY (values now single-quoted: the URL's
+    & broke `source .env` in the shell scripts until quoted)
+  - run dev server: backend/.venv/bin/python backend/wsgi.py (port 5001)
+  - next: Phase 2 (customer browse endpoints)
 - Frontend - React router or Next.js
 
 

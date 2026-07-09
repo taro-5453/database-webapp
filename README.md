@@ -43,7 +43,9 @@ script/
 └── verify.sh              checks the deploy: grants, bcrypt, momo_app lockout
 
 document/                  report and ER diagram
-backend/                   Flask API (planned)
+backend/                   Flask API (phased plan in backend/PLAN.md)
+├── app/                   __init__.py (factory), db.py (call_fn), auth.py
+└── wsgi.py                entry point: backend/.venv/bin/python backend/wsgi.py
 frontend/                  React Router / Next.js app (planned)
 progress.md                running task list / project notes
 ```
