@@ -8,6 +8,10 @@
 --   1. creates the dining_session (status 'active'),
 --   2. marks the table 'occupied',
 --   3. marks the reservation 'seated' (when one was given).
+-- Also accepts a reservation ALREADY seated at this table by
+-- fn_seat_reservation (queue screen seats first, then the session
+-- opens once the party picks a tier) — in that case the table
+-- being 'occupied' is expected and step 3 is skipped.
 -- Returns the new session_id.
 -- ============================================================
 CREATE OR REPLACE FUNCTION fn_open_session(
@@ -26,12 +30,39 @@ DECLARE
     v_table_status VARCHAR;
     v_capacity     INT;
     v_session_id   INT;
+    v_res_status   VARCHAR;
+    v_res_table    INT;
+    v_preseated    BOOLEAN := FALSE;
 BEGIN
     IF p_guest_count <= 0 THEN
         RAISE EXCEPTION 'Guest count must be positive';
     END IF;
 
-    -- table must exist, belong to this branch, be free, and fit the party
+    -- a reservation must be waiting ('reserved'/'queued'), or already
+    -- seated at THIS table by fn_seat_reservation (queue screen)
+    IF p_reservation_id IS NOT NULL THEN
+        SELECT r.status, r.table_id INTO v_res_status, v_res_table
+        FROM reservation r
+        WHERE r.reservation_id = p_reservation_id AND r.branch_id = p_branch_id;
+
+        IF v_res_status IS NULL THEN
+            RAISE EXCEPTION 'Reservation % does not exist at branch %',
+                            p_reservation_id, p_branch_id;
+        END IF;
+
+        IF v_res_status = 'seated' AND v_res_table = p_table_id THEN
+            v_preseated := TRUE;
+        ELSIF v_res_status = 'seated' THEN
+            RAISE EXCEPTION 'Reservation % is already seated at table %',
+                            p_reservation_id, v_res_table;
+        ELSIF v_res_status NOT IN ('reserved', 'queued') THEN
+            RAISE EXCEPTION 'Reservation % cannot be seated (status: %)',
+                            p_reservation_id, v_res_status;
+        END IF;
+    END IF;
+
+    -- table must exist, belong to this branch, and fit the party;
+    -- it must be free unless this party was pre-seated on it
     SELECT dt.status, dt.capacity INTO v_table_status, v_capacity
     FROM dining_table dt
     WHERE dt.table_id = p_table_id AND dt.branch_id = p_branch_id;
@@ -40,7 +71,7 @@ BEGIN
         RAISE EXCEPTION 'Table % does not exist at branch %', p_table_id, p_branch_id;
     END IF;
 
-    IF v_table_status <> 'available' THEN
+    IF v_table_status <> 'available' AND NOT v_preseated THEN
         RAISE EXCEPTION 'Table % is not available (status: %)', p_table_id, v_table_status;
     END IF;
 
@@ -58,16 +89,8 @@ BEGIN
         RAISE EXCEPTION 'Staff % does not belong to branch %', p_staff_id, p_branch_id;
     END IF;
 
-    -- when seating a reservation, it must be one still waiting for a table
-    IF p_reservation_id IS NOT NULL THEN
-        IF NOT EXISTS (SELECT 1 FROM reservation r
-                       WHERE r.reservation_id = p_reservation_id
-                         AND r.branch_id = p_branch_id
-                         AND r.status IN ('reserved', 'queued')) THEN
-            RAISE EXCEPTION 'Reservation % is not waiting to be seated at branch %',
-                            p_reservation_id, p_branch_id;
-        END IF;
-
+    -- pre-seated reservations were already marked 'seated' with this table
+    IF p_reservation_id IS NOT NULL AND NOT v_preseated THEN
         UPDATE reservation
         SET status = 'seated', table_id = p_table_id
         WHERE reservation_id = p_reservation_id;
