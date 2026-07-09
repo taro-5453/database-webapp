@@ -64,7 +64,10 @@
   - Phase 2 DONE, tested live: GET /api/branches, /api/branches/<id>/available-tables?party_size=,
     /api/me/membership, /api/me/points (cookie-guarded); custom JSON provider (Decimal->float,
     timestamps->ISO) added ahead of Phase 3
-  - next: Phase 3 (customer actions: reservations, orders, bill)
+  - Phase 3 DONE, tested live: POST /api/reservations (queue or timed), dining-session
+    menu/orders/bill; new fn_get_session_owner (fn #25, verify.sh expects 25 now) gives
+    403 on other customers' sessions, 404 on missing; DataError/IntegrityError -> 400
+  - next: Phase 4 (staff floor ops: queue, seat, open session, dashboard)
 - Frontend - React router or Next.js
 
 

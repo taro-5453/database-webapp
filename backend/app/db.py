@@ -58,6 +58,10 @@ def call_fn(name: str, *args) -> list[dict]:
             return conn.execute(query, args).fetchall()
     except psycopg.errors.RaiseException as exc:
         raise ApiError(400, exc.diag.message_primary or "rejected by database")
+    except (psycopg.DataError, psycopg.IntegrityError) as exc:
+        # bad values that slipped past a fn's own checks (invalid
+        # timestamp, unknown foreign key, CHECK violation, ...)
+        raise ApiError(400, exc.diag.message_primary or "invalid input")
     except psycopg.OperationalError as exc:
         raise ApiError(503, "database unavailable") from exc
 

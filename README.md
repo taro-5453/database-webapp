@@ -23,7 +23,8 @@ database/                  schema, sample data, security
 └── security.sql           EXECUTE-only momo_app role the web app connects as
 
 function/                  SQL functions, grouped by screen
-├── auth/                  fn_register_customer, fn_login_customer, fn_login_staff
+├── auth/                  fn_register_customer, fn_login_customer, fn_login_staff,
+│                          fn_get_session_owner (backend authorization helper)
 ├── customer/
 │   ├── browse_branches/   fn_get_branches, fn_get_available_tables
 │   ├── make_reservation/  fn_create_reservation

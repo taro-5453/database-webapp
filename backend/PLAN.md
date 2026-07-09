@@ -52,17 +52,17 @@ Goal: everything a logged-in customer sees.
 - customer_id always comes from the session cookie, never the URL/body
 - Done when: each endpoint returns sample data via curl.
 
-## Phase 3 — Customer actions
+## Phase 3 — Customer actions  ✅ DONE (tested against Render)
 Goal: the reserve → order → watch-the-bill flow.
 - `POST /api/reservations` → fn_create_reservation (table/slot NULL = queue)
 - `GET  /api/dining-sessions/<id>/menu` → fn_get_tier_menu
 - `POST /api/dining-sessions/<id>/orders` → fn_place_order
 - `GET  /api/dining-sessions/<id>/orders` → fn_get_session_orders
 - `GET  /api/dining-sessions/<id>/bill` → fn_get_current_bill
-- KNOWN GAP to decide here: the fns don't check the session belongs
-  to the caller (any logged-in customer could pass another session_id).
-  Options: (a) accept for course scope + note in report, (b) add a
-  fn_session_owner(session_id) SQL function and check in the decorator.
+- KNOWN GAP — RESOLVED with option (b): fn_get_session_owner
+  (function/auth/, function #25) tells the backend who owns a
+  session; every /dining-sessions route 403s other customers and
+  404s missing sessions.
 - Done when: full happy path via curl against a seeded session, and
   a not-in-tier order returns the RAISE message as a 400.
 
