@@ -21,6 +21,12 @@
 -- shadowing table/function names the definer runs as owner).
 -- ============================================================
 
+-- ---------- 0. Extensions ----------
+-- pgcrypto (bcrypt) is also in schema.sql, but a database created
+-- before that line was added never got it — and this file runs on
+-- every deploy, so ensure it here too. Idempotent.
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- ---------- 1. The app role ----------
 -- LOGIN role the Flask backend connects as.
 -- CHANGE THE PASSWORD before deploying, e.g.:
@@ -52,15 +58,19 @@ REVOKE ALL ON ALL TABLES    IN SCHEMA public FROM momo_app, PUBLIC;
 REVOKE ALL ON ALL SEQUENCES IN SCHEMA public FROM momo_app, PUBLIC;
 
 -- By default ANY role may execute ANY new function (PUBLIC gets
--- EXECUTE implicitly). Revoke that, now and for future functions,
--- so EXECUTE must be granted explicitly below.
-REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA public FROM PUBLIC;
+-- EXECUTE implicitly). Revoke that for future functions here; the
+-- existing fn_* ones are revoked one by one in the loop below.
+-- (Not "ON ALL FUNCTIONS IN SCHEMA public": on hosted Postgres the
+-- pgcrypto helpers are owned by the postgres superuser, so that
+-- form spams "no privileges could be revoked" warnings for
+-- functions we cannot — and don't need to — touch.)
 ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
 -- ---------- 3. SECURITY DEFINER + EXECUTE grants ----------
 -- Loop over every fn_* function in public so signatures never go
 -- stale: each one becomes SECURITY DEFINER with a pinned
--- search_path, and momo_app gets EXECUTE on it.
+-- search_path, loses PUBLIC's implicit EXECUTE, and momo_app gets
+-- EXECUTE on it.
 DO $$
 DECLARE
     fn RECORD;
@@ -75,6 +85,7 @@ BEGIN
         EXECUTE format(
             'ALTER FUNCTION %s SECURITY DEFINER SET search_path = public, pg_temp',
             fn.signature);
+        EXECUTE format('REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC', fn.signature);
         EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO momo_app', fn.signature);
     END LOOP;
 END;
@@ -95,11 +106,16 @@ $$;
 --   checkout:          fn_validate_promotion, fn_checkout
 
 -- ---------- 4. Verify ----------
--- What momo_app is allowed to execute (expect the 24 fn_* rows):
+-- What momo_app is allowed to execute (expect the 24 fn_* rows).
+-- Filtered to fn_* because on hosted Postgres (Render) the pgcrypto
+-- helper functions are owned by the postgres superuser, so our
+-- REVOKE cannot strip PUBLIC's EXECUTE on them — harmless: they are
+-- pure computation (crypt, armor, ...) with no table access.
 SELECT p.oid::regprocedure AS callable_by_momo_app
 FROM pg_proc p
 JOIN pg_namespace n ON n.oid = p.pronamespace
 WHERE n.nspname = 'public'
+  AND p.proname LIKE 'fn\_%'
   AND has_function_privilege('momo_app', p.oid, 'EXECUTE')
 ORDER BY 1;
 
