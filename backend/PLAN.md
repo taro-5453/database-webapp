@@ -97,7 +97,12 @@ Goal: frontend-ready and live.
 - ✅ script/smoke_api.sh — works against any URL; staff checks with
   SMOKE_STAFF_NAME/PASSWORD, cleans up after itself when DB_URL set
 - ✅ gunicorn (verified locally); JSON 404/405/500 handlers
-- ⬜ Render web service — dashboard steps:
+- ✅ backend/Dockerfile (python:3.14-slim, non-root, binds $PORT;
+  build+run+smoke verified locally against the Render DB)
+- ⬜ Render web service — dashboard steps, EITHER:
+    Docker runtime: language "Docker", Dockerfile path backend/Dockerfile,
+      Docker build context backend/ — no build/start commands needed
+    OR native Python:
     1. New Web Service from this repo
     2. Build command:  pip install -r backend/requirements.txt
     3. Start command:  gunicorn --chdir backend wsgi:app --bind 0.0.0.0:$PORT

@@ -46,8 +46,10 @@ script/
 
 document/                  report and ER diagram
 backend/                   Flask API (phased plan in backend/PLAN.md)
-├── app/                   __init__.py (factory), db.py (call_fn), auth.py
-└── wsgi.py                entry point: backend/.venv/bin/python backend/wsgi.py
+├── app/                   __init__.py (factory), db.py (call_fn), auth.py,
+│                          customer.py, staff.py, util.py
+├── wsgi.py                entry point: backend/.venv/bin/python backend/wsgi.py
+└── Dockerfile             container build (gunicorn, binds $PORT)
 frontend/                  React Router / Next.js app (planned)
 progress.md                running task list / project notes
 ```
@@ -87,6 +89,8 @@ deploying).
 ## Backend (Flask API)
 - Dev server: `backend/.venv/bin/python backend/wsgi.py` (port 5001)
 - Production: `gunicorn --chdir backend wsgi:app`
+- Docker: `docker build -t momo-backend backend/` then
+  `docker run -p 8000:8000 -e MOMO_APP_URL=... -e FLASK_SECRET_KEY=... momo-backend`
 - Config via repo-root `.env` (gitignored): `MOMO_APP_URL`,
   `FLASK_SECRET_KEY`, optional `FRONTEND_ORIGIN`
 - Smoke test: `./script/smoke_api.sh [API_URL]`
