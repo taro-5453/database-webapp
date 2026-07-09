@@ -43,7 +43,7 @@ Goal: register/login works, later phases can protect routes.
 - Done when: register → login → /me round-trips via curl, wrong
   password gives 401.
 
-## Phase 2 — Customer browse (read-only)
+## Phase 2 — Customer browse (read-only)  ✅ DONE (tested against Render)
 Goal: everything a logged-in customer sees.
 - `GET /api/branches` → fn_get_branches (public)
 - `GET /api/branches/<id>/available-tables?party_size=N` → fn_get_available_tables (public)

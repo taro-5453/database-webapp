@@ -61,7 +61,10 @@
   - .env gained MOMO_APP_URL + FLASK_SECRET_KEY (values now single-quoted: the URL's
     & broke `source .env` in the shell scripts until quoted)
   - run dev server: backend/.venv/bin/python backend/wsgi.py (port 5001)
-  - next: Phase 2 (customer browse endpoints)
+  - Phase 2 DONE, tested live: GET /api/branches, /api/branches/<id>/available-tables?party_size=,
+    /api/me/membership, /api/me/points (cookie-guarded); custom JSON provider (Decimal->float,
+    timestamps->ISO) added ahead of Phase 3
+  - next: Phase 3 (customer actions: reservations, orders, bill)
 - Frontend - React router or Next.js
 
 
