@@ -80,7 +80,8 @@
   - note for report: fn_update_order_status / fn_update_item_availability trust staff on ids
     (no branch check on the id itself) — staff are semi-trusted internal users, UI only shows
     own-branch ids; customers CAN'T call these at all
-- Frontend - React router or Next.js
+- Frontend - React Router (friends' task): frontend/PLAN.md has the phased plan +
+  full endpoint reference; dirs scaffolded; key rule: fetch with credentials:'include'
 
 
 ## Notes to self

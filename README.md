@@ -50,7 +50,9 @@ backend/                   Flask API (phased plan in backend/PLAN.md)
 │                          customer.py, staff.py, util.py
 ├── wsgi.py                entry point: backend/.venv/bin/python backend/wsgi.py
 └── Dockerfile             container build (gunicorn, binds $PORT)
-frontend/                  React Router / Next.js app (planned)
+frontend/                  React Router app (phased plan in frontend/PLAN.md)
+├── app/                   routes/, components/, lib/ (created by phases)
+└── public/                static assets
 progress.md                running task list / project notes
 ```
 
