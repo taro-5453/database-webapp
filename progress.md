@@ -24,6 +24,11 @@
   - manage_promotions: fn_create_promotion, fn_get_promotions
   - queue: fn_get_queue, fn_seat_reservation
   - fn_open_session updated: now also accepts a reservation pre-seated by fn_seat_reservation
+- database/security.sql (written, still need running on Render):
+  - momo_app role: LOGIN, EXECUTE-only, no table access; app/Flask connects as this
+  - all fn_* become SECURITY DEFINER + pinned search_path (done via loop, re-run after adding functions)
+  - revokes PUBLIC's default EXECUTE on functions + CREATE on schema public
+  - report material: security section = bcrypt + least-privilege role + injection blast radius
 
 ## Next / To Do
 - Update add SQL functions to Render
