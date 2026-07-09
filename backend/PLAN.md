@@ -76,7 +76,7 @@ Goal: the queue → seat → open session → dashboard loop.
 - Done when: seat a queued sample reservation and see it appear on
   the active-sessions dashboard, minutes_remaining included.
 
-## Phase 5 — Staff kitchen, menu, promotions, checkout
+## Phase 5 — Staff kitchen, menu, promotions, checkout  ✅ DONE (tested against Render)
 Goal: the remaining staff CRUD, finishing the API surface.
 - `GET   /api/staff/kitchen` → fn_get_kitchen_orders
 - `PATCH /api/staff/orders/<id>` → fn_update_order_status
