@@ -56,6 +56,6 @@ END;
 $$;
 
 -- Example call (allowed item):
-SELECT fn_place_order(2, 3, 2);
+-- SELECT fn_place_order(2, 3, 2);
 -- Example call (should FAIL if item not in tier):
-SELECT fn_place_order(4, 3, 1);   -- item 3 (wagyu) not in standard tier
+-- SELECT fn_place_order(4, 3, 1);   -- item 3 (wagyu) not in standard tier

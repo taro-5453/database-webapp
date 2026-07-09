@@ -30,8 +30,8 @@ END;
 $$;
 
 -- Example call (salmon ran out):
-SELECT fn_update_item_availability(5, FALSE);
+-- SELECT fn_update_item_availability(5, FALSE);
 -- Example call (salmon restocked):
-SELECT fn_update_item_availability(5, TRUE);
+-- SELECT fn_update_item_availability(5, TRUE);
 -- Example call (should FAIL: no such item):
-SELECT fn_update_item_availability(999, FALSE);
+-- SELECT fn_update_item_availability(999, FALSE);

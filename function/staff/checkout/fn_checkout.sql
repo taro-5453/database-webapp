@@ -110,8 +110,8 @@ END;
 $$;
 
 -- Example call (no promotion):
-SELECT fn_checkout(1, NULL, 'cash');
+-- SELECT fn_checkout(1, NULL, 'cash');
 -- Example call (with a promotion code):
-SELECT fn_checkout(1, 'WELCOME10', 'credit_card');
+-- SELECT fn_checkout(1, 'WELCOME10', 'credit_card');
 -- Example call (should FAIL, session already closed or missing):
-SELECT fn_checkout(999);
+-- SELECT fn_checkout(999);

@@ -73,8 +73,8 @@ END;
 $$;
 
 -- Example call (queued party of 2 at branch 2 -> table 5):
-SELECT fn_seat_reservation(3, 5, 3);
+-- SELECT fn_seat_reservation(3, 5, 3);
 -- Example call (should FAIL: reservation 4 is already seated):
-SELECT fn_seat_reservation(4, 5, 3);
+-- SELECT fn_seat_reservation(4, 5, 3);
 -- Example call (should FAIL: table 6 is occupied):
-SELECT fn_seat_reservation(3, 6, 3);
+-- SELECT fn_seat_reservation(3, 6, 3);

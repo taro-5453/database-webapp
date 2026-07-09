@@ -34,6 +34,6 @@ END;
 $$;
 
 -- Example call (succeeds, sample-data password is 'password123'):
-SELECT * FROM fn_login_customer('nattapong@example.com', 'password123');
+-- SELECT * FROM fn_login_customer('nattapong@example.com', 'password123');
 -- Example call (wrong password: returns 0 rows):
-SELECT * FROM fn_login_customer('nattapong@example.com', 'wrongpass');
+-- SELECT * FROM fn_login_customer('nattapong@example.com', 'wrongpass');

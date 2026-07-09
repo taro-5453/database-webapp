@@ -39,5 +39,5 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_current_bill(1);
+-- SELECT * FROM fn_get_current_bill(1);
 -- Example result: running total for session 1 so far (buffet + extras ordered).

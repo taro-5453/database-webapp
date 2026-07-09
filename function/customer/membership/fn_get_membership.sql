@@ -28,5 +28,5 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_membership(2);
+-- SELECT * FROM fn_get_membership(2);
 -- Example result: membership id, name, points, and tier for customer 2.

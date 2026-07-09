@@ -35,6 +35,6 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_queue(2);
+-- SELECT * FROM fn_get_queue(2);
 -- Example result: waiting parties at branch 2 in arrival order,
 -- with the customer's name and phone so staff can call them.

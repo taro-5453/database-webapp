@@ -30,8 +30,8 @@ END;
 $$;
 
 -- Example call (valid code):
-SELECT * FROM fn_validate_promotion('WELCOME10');
+-- SELECT * FROM fn_validate_promotion('WELCOME10');
 -- Example call (expired code):
-SELECT * FROM fn_validate_promotion('SONGKRAN30');   -- valid_until 2026-04-30, already past
+-- SELECT * FROM fn_validate_promotion('SONGKRAN30');   -- valid_until 2026-04-30, already past
 -- Example call (code doesn't exist -> no rows):
-SELECT * FROM fn_validate_promotion('NOPE');
+-- SELECT * FROM fn_validate_promotion('NOPE');

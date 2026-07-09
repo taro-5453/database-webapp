@@ -60,8 +60,8 @@ END;
 $$;
 
 -- Example call (15% off until New Year):
-SELECT fn_create_promotion(1, 'NEWYEAR15', 15.00, 'percent', '2026-12-31');
+-- SELECT fn_create_promotion(1, 'NEWYEAR15', 15.00, 'percent', '2026-12-31');
 -- Example call (flat 80 baht off, never expires):
-SELECT fn_create_promotion(3, 'TAKE80', 80.00, 'fixed', NULL);
+-- SELECT fn_create_promotion(3, 'TAKE80', 80.00, 'fixed', NULL);
 -- Example call (should FAIL: duplicate of sample code WELCOME10):
-SELECT fn_create_promotion(1, 'welcome10', 10.00, 'percent', '2026-12-31');
+-- SELECT fn_create_promotion(1, 'welcome10', 10.00, 'percent', '2026-12-31');

@@ -35,6 +35,6 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_available_tables(1, 4);
+-- SELECT * FROM fn_get_available_tables(1, 4);
 -- Example result: tables at branch 1 that are free and seat 4+.
 

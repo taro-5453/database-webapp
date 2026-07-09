@@ -38,6 +38,6 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_tier_menu(2);
+-- SELECT * FROM fn_get_tier_menu(2);
 -- Example result: items the tier of session 2 is allowed to order.
 

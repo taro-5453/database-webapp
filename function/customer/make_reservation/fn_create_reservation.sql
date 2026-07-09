@@ -39,8 +39,8 @@ END;
 $$;
 
 -- Example call (timed booking):
-SELECT fn_create_reservation(1, 1, 2, '2026-07-15 18:00:00', 4);
+-- SELECT fn_create_reservation(1, 1, 2, '2026-07-15 18:00:00', 4);
 -- Example call (join queue):
-SELECT fn_create_reservation(3, 2, NULL, NULL, 2);
+-- SELECT fn_create_reservation(3, 2, NULL, NULL, 2);
 -- Checking
-SELECT * FROM reservation ORDER BY reservation_id DESC;
+-- SELECT * FROM reservation ORDER BY reservation_id DESC;

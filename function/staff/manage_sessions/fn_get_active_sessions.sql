@@ -54,7 +54,7 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_active_sessions(1);
+-- SELECT * FROM fn_get_active_sessions(1);
 -- Example result: one row per active session at branch 1, with the
 -- tier's time limit, when it ends, and minutes remaining (negative
 -- = overtime), most urgent first.

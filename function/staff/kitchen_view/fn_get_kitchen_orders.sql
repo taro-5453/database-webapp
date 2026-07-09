@@ -46,15 +46,15 @@ END;
 $$;
 
 -- Dump testing data
-INSERT INTO order_line (session_id, item_id, quantity, unit_price, ordered_at, status)
-VALUES (1, 1, 2, 0.00, NOW(), 'ordered');
+-- INSERT INTO order_line (session_id, item_id, quantity, unit_price, ordered_at, status)
+-- VALUES (1, 1, 2, 0.00, NOW(), 'ordered');
 
 -- Example call:
-SELECT * FROM fn_get_kitchen_orders(2);
+-- SELECT * FROM fn_get_kitchen_orders(2);
 -- Example result: unserved dishes for active tables at branch 2.
 -- SELECT * FROM reservation ORDER BY reservation_id DESC;
 
 
 -- Delete dump data
-DELETE FROM order_line WHERE order_line_id = 15
+-- DELETE FROM order_line WHERE order_line_id = 15
 

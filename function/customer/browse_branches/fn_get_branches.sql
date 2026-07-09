@@ -23,5 +23,5 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_branches();
+-- SELECT * FROM fn_get_branches();
 -- Example result: all 10 branches, alphabetical.

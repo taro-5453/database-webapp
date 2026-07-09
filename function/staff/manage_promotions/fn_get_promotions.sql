@@ -35,6 +35,6 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_promotions();
+-- SELECT * FROM fn_get_promotions();
 -- Example result: every promotion with its creator; active codes
 -- first (soonest to expire on top), expired codes at the bottom.

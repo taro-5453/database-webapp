@@ -113,8 +113,8 @@ END;
 $$;
 
 -- Example call (walk-in, no reservation):
-SELECT fn_open_session(NULL, 1, 1, 3, 1, 1, 2);
+-- SELECT fn_open_session(NULL, 1, 1, 3, 1, 1, 2);
 -- Example call (seating reservation 1):
-SELECT fn_open_session(1, 1, 2, 1, 1, 2, 4);
+-- SELECT fn_open_session(1, 1, 2, 1, 1, 2, 4);
 -- Example call (should FAIL: table already occupied by the first call):
-SELECT fn_open_session(NULL, 1, 1, 5, 1, 1, 2);
+-- SELECT fn_open_session(NULL, 1, 1, 5, 1, 1, 2);

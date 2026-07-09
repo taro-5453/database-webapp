@@ -37,5 +37,5 @@ END;
 $$;
 
 -- Example call:
-SELECT * FROM fn_get_session_orders(2);
+-- SELECT * FROM fn_get_session_orders(2);
 -- Example result: all dishes ordered in session 2, with line totals.

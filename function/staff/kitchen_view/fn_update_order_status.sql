@@ -36,8 +36,8 @@ END;
 $$;
 
 -- Example call (kitchen starts cooking line 1):
-SELECT fn_update_order_status(1, 'preparing');
+-- SELECT fn_update_order_status(1, 'preparing');
 -- Example call (dish delivered to the table):
-SELECT fn_update_order_status(1, 'served');
+-- SELECT fn_update_order_status(1, 'served');
 -- Example call (should FAIL: not a valid status):
-SELECT fn_update_order_status(1, 'eaten');
+-- SELECT fn_update_order_status(1, 'eaten');

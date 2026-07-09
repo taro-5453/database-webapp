@@ -54,8 +54,8 @@ END;
 $$;
 
 -- Example call:
-SELECT fn_register_customer('Test User', 'test.user@example.com', '081-000-0099', 'supersecret1');
+-- SELECT fn_register_customer('Test User', 'test.user@example.com', '081-000-0099', 'supersecret1');
 -- Example call (should FAIL: duplicate email):
-SELECT fn_register_customer('Someone Else', 'nattapong@example.com', NULL, 'supersecret1');
+-- SELECT fn_register_customer('Someone Else', 'nattapong@example.com', NULL, 'supersecret1');
 -- Example call (should FAIL: password too short):
-SELECT fn_register_customer('Short Pass', 'short@example.com', NULL, 'abc');
+-- SELECT fn_register_customer('Short Pass', 'short@example.com', NULL, 'abc');

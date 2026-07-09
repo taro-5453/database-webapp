@@ -59,8 +59,8 @@ END;
 $$;
 
 -- Example call (buffet-included item, orderable by both branch-1 tiers):
-SELECT fn_add_menu_item(1, 'Lamb Slices', 'meat', 0.00, ARRAY[1, 2]);
+-- SELECT fn_add_menu_item(1, 'Lamb Slices', 'meat', 0.00, ARRAY[1, 2]);
 -- Example call (extra-charge dessert, premium tier only):
-SELECT fn_add_menu_item(1, 'Matcha Parfait', 'dessert', 89.00, ARRAY[2]);
+-- SELECT fn_add_menu_item(1, 'Matcha Parfait', 'dessert', 89.00, ARRAY[2]);
 -- Example call (should FAIL: tier 3 belongs to branch 2):
-SELECT fn_add_menu_item(1, 'Wrong Tier Item', 'meat', 0.00, ARRAY[3]);
+-- SELECT fn_add_menu_item(1, 'Wrong Tier Item', 'meat', 0.00, ARRAY[3]);
