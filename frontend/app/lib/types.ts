@@ -57,3 +57,42 @@ export type Bill = {
   extra_charges: number;
   running_total: number;
 };
+
+export type QueueEntry = {
+  queue_position: number;
+  reservation_id: number;
+  customer_id: number;
+  customer_name: string;
+  phone: string | null;
+  party_size: number;
+};
+
+export type Tier = {
+  tier_id: number;
+  name: string;
+  price_per_head: number;
+  duration_minutes: number;
+};
+
+export type ActiveSession = {
+  session_id: number;
+  table_id: number;
+  customer_name: string;
+  guest_count: number;
+  tier_name: string;
+  duration_minutes: number;
+  start_time: string;
+  ends_at: string;
+  minutes_remaining: number;
+  staff_name: string;
+};
+
+export type KitchenOrderLine = {
+  order_line_id: number;
+  session_id: number;
+  table_id: number;
+  item_name: string;
+  quantity: number;
+  ordered_at: string;
+  status: string;
+};

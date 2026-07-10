@@ -89,6 +89,15 @@
     SSR (react-router-serve :3000, uses friend's existing frontend/Dockerfile untouched).
     Tested: register->me cookie flow works through proxy. Needs root .env (MOMO_APP_URL+secret).
     nginx config baked into docker/Dockerfile (bind-mount hit Docker Desktop file-sharing block).
+  - fn_get_queue now also returns customer_id (found while building the Phase 4 seat
+    dialog: fn_open_session needs it explicitly and doesn't derive it from the
+    reservation). Column change required DROP FUNCTION first (Postgres can't
+    CREATE OR REPLACE across an OUT-param shape change) — the DROP is now baked into
+    fn_get_queue.sql itself so future re-deploys stay one command. Deployed + verified
+    live (queue row now includes customer_id). No psql on this machine, so deploy.sh
+    itself didn't run this time — used a one-off Python/psycopg script instead, same
+    file order/behavior; if you deploy from a machine with psql, script/deploy.sh
+    still works unchanged.
 
 
 ## Notes to self
@@ -137,29 +146,44 @@ clicking through the real browser UI.**
   ongleevs pasted these in chat once; treat as already-known, don't ask
   again, just confirm the file still exists before assuming servers can start.
 
-**BLOCKED — decision needed before Phase 4 can be built properly:**
-No backend endpoint lists buffet tiers (id/name/price/duration_minutes).
-`fn_open_session` (called by `POST /api/staff/dining-sessions`) requires
-a `tier_id`, but nothing in `backend/app/*.py` or the SQL functions
-returns the tier list for a branch — checked thoroughly, it's a real
-gap, not something we missed. This blocks the staff "seat -> open
-session" dialog's tier picker. Options discussed with ongleevs, NOT yet
-decided when this session ended:
-  1. Ask the backend teammate to add `GET /api/branches/:id/tiers` (or
-     similar) backed by a new simple SQL function — cleanest, but blocks
-     until he does it (he's the one testing the backend, mentioned he
-     might add more endpoints).
-  2. Build the missing SQL function + Flask endpoint ourselves, following
-     the exact same read-only pattern as fn_get_branches — low risk,
-     unblocks immediately, but should still get backend teammate's review
-     since backend is his area.
-  3. Stub it: raw numeric tier_id input field for now, swap for a proper
-     dropdown once the endpoint exists — keeps moving, worse UX
-     temporarily.
-**Next step on resume: ask ongleevs which option, then continue Phase 4**
-(/staff queue+seat+open dialog, /staff dashboard with overtime
-highlighting, /staff/kitchen with status-advance buttons — see
-frontend/PLAN.md Phase 4 for full spec).
+**BLOCKED note above is RESOLVED (2026-07-10, later same day):** Nathanon
+added `fn_get_tiers` + `GET /api/staff/tiers` himself (commit `10850fd`,
+before this handoff was even read back) — option 1 from the list below,
+deployed and tested live. Kept the paragraph for the reasoning trail.
+
+**Phase 4 DONE, pushed, and verified live in a real headless-Chromium
+browser session (Playwright), not just curl:** `/staff` dashboard,
+`/staff/queue` (seat dialog -> open-session dialog), `/staff/kitchen`.
+Also added staff nav links (Dashboard/Queue/Kitchen) to `Header.tsx`.
+- Hit a second real gap while building the seat dialog: `fn_get_queue`
+  never returned `customer_id` (only name/phone), but `fn_open_session`
+  requires `customer_id` explicitly and does NOT derive it from the
+  reservation. Fixed by adding `customer_id` to `fn_get_queue`'s
+  `RETURNS TABLE` (`function/staff/queue/fn_get_queue.sql`) — needed a
+  `DROP FUNCTION` first since Postgres can't `CREATE OR REPLACE` across
+  an OUT-param shape change; that DROP is now baked into the file so
+  future re-deploys stay one command. Deployed + verified live (queue
+  row now includes customer_id) and confirmed end-to-end in-browser:
+  seated a real queued reservation onto an available table, opened its
+  buffet session, watched it disappear from the queue and appear
+  correctly on the dashboard.
+- No `psql` on this machine, so `script/deploy.sh` itself didn't run
+  this round — used a one-off Python/psycopg script instead (same file
+  order/behavior as deploy.sh). `script/deploy.sh` is untouched and
+  still works normally from a machine that has `psql`.
+- Kitchen view's status-advance button verified interactively too
+  (clicked "Mark served", order line correctly dropped off the
+  unserved list).
+- Test data note: branch 1's dining tables were all occupied by
+  leftover test sessions from earlier phases before this session, which
+  blocked testing the seat flow (no available tables). Freed table 1 via
+  a normal checkout call (session 18, the exact pattern fn_checkout is
+  built for) rather than touching data directly — branch 1 still has 3
+  other stale test sessions occupying tables (2, 4, 18) from prior
+  phases; worth a cleanup pass before a demo, not urgent otherwise.
+
+**Next: Phase 5 (staff menu/promotions management + checkout dialog on
+the dashboard) — see frontend/PLAN.md Phase 5 for full spec.**
 
 **Also added this session:** `.claude/skills/scrutinize/SKILL.md` — a
 project skill ongleevs described from another repo (outsider-perspective

@@ -25,9 +25,20 @@ export function Header() {
                   </Link>
                 </>
               ) : (
-                <span className="text-white/90">
-                  {user.name} · {user.role}
-                </span>
+                <>
+                  <Link to="/staff" className="hover:text-white/80">
+                    Dashboard
+                  </Link>
+                  <Link to="/staff/queue" className="hover:text-white/80">
+                    Queue
+                  </Link>
+                  <Link to="/staff/kitchen" className="hover:text-white/80">
+                    Kitchen
+                  </Link>
+                  <span className="text-white/90">
+                    {user.name} · {user.role}
+                  </span>
+                </>
               )}
               <button
                 onClick={() => logout()}

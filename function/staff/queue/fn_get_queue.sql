@@ -6,13 +6,21 @@
 -- on the reservations screen, not the queue).
 -- queue_position is first-come-first-served by reservation_id,
 -- since queued entries have no slot_time in this schema.
+-- customer_id is included so the "seat" flow can pass it straight
+-- into fn_open_session, which requires it explicitly and doesn't
+-- derive it from the reservation itself.
 -- ============================================================
+-- Adding a column changes the OUT-parameter row type, which
+-- CREATE OR REPLACE can't do in place — drop first (idempotent).
+DROP FUNCTION IF EXISTS fn_get_queue(INT);
+
 CREATE OR REPLACE FUNCTION fn_get_queue(
     p_branch_id INT
 )
 RETURNS TABLE (
     queue_position INT,
     reservation_id INT,
+    customer_id    INT,
     customer_name  VARCHAR,
     phone          VARCHAR,
     party_size     INT
@@ -23,6 +31,7 @@ BEGIN
     RETURN QUERY
     SELECT ROW_NUMBER() OVER (ORDER BY r.reservation_id)::INT AS queue_position,
            r.reservation_id,
+           r.customer_id,
            c.name  AS customer_name,
            c.phone,
            r.party_size
