@@ -84,6 +84,14 @@ def update_order_status(order_line_id: int):
     return jsonify({"order_line_id": order_line_id, "status": status})
 
 
+@bp.get("/menu-items")
+@staff_required
+def menu_items():
+    """Every item at the staff member's branch, available or not —
+    fills the manage-menu screen's item list."""
+    return jsonify(call_fn("fn_get_menu_items", session["branch_id"]))
+
+
 @bp.post("/menu-items")
 @staff_required
 def add_menu_item():

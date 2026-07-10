@@ -96,3 +96,22 @@ export type KitchenOrderLine = {
   ordered_at: string;
   status: string;
 };
+
+export type Promotion = {
+  promotion_id: number;
+  code: string;
+  discount: number;
+  discount_type: "percent" | "fixed";
+  valid_until: string | null;
+  is_active: boolean;
+  created_by: string;
+};
+
+export type PromotionValidation = {
+  code: string;
+  is_valid: boolean;
+  promotion_id?: number;
+  discount?: number;
+  discount_type?: "percent" | "fixed";
+  valid_until?: string | null;
+};

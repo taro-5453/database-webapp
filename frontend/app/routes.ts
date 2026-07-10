@@ -8,6 +8,8 @@ export default [
   route("staff", "routes/staff-dashboard.tsx"),
   route("staff/queue", "routes/staff-queue.tsx"),
   route("staff/kitchen", "routes/staff-kitchen.tsx"),
+  route("staff/menu", "routes/staff-menu.tsx"),
+  route("staff/promotions", "routes/staff-promotions.tsx"),
   route("branches/:id", "routes/branch-detail.tsx"),
   route("profile", "routes/profile.tsx"),
   route("reserve", "routes/reserve.tsx"),

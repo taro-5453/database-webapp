@@ -182,8 +182,40 @@ Also added staff nav links (Dashboard/Queue/Kitchen) to `Header.tsx`.
   other stale test sessions occupying tables (2, 4, 18) from prior
   phases; worth a cleanup pass before a demo, not urgent otherwise.
 
-**Next: Phase 5 (staff menu/promotions management + checkout dialog on
-the dashboard) — see frontend/PLAN.md Phase 5 for full spec.**
+**Phase 5 DONE, pushed, verified live in-browser (Playwright):**
+`/staff/menu` (item list + availability toggle + add-item form with
+tier checkboxes), `/staff/promotions` (list, greyed-out expired codes +
+create form), and a checkout dialog on the dashboard (promotion code
+with live validate, payment method, confirm -> shows bill_id + applied
+discount). Menu/Promotions links added to Header nav.
+- Third gap hit, same pattern as the last two: no function/endpoint
+  listed a branch's full menu inventory. `fn_get_tier_menu` is
+  session+tier-scoped and filters to available=TRUE only, so it
+  couldn't serve the manage-menu screen (which needs to see unavailable
+  items too, to restore them). Added `fn_get_menu_items(branch_id)`
+  (brand-new function, no DROP needed this time) +
+  `GET /api/staff/menu-items`. Deployed same way as the fn_get_queue
+  fix (one-off Python/psycopg script, no psql on this machine).
+- Verified end-to-end in-browser: added a test dish, toggled it
+  unavailable, created a promotion code, validated it live at checkout,
+  and checked out an actual overtime session (table 4, session 19) with
+  the 10% discount applied — confirmed both in the UI (bill_id + discount
+  shown) and by re-querying the API that the session left the active
+  list and the table freed. This incidentally cleaned up one of the 3
+  stale test sessions noted after Phase 4 (table 4 now free; tables 2
+  and 18 still have leftover test sessions).
+- "Show final bill" in the plan is a slight scope note: the checkout
+  endpoint only returns `bill_id`, there's no staff-facing "fetch a
+  finished bill" endpoint, so the dialog shows bill_id + the discount
+  that was applied rather than a full itemized breakdown. Would need a
+  new backend endpoint to do more — not built, not blocking.
+- Left behind as harmless test data (same category as the sample promo
+  codes already in the DB): menu item "Phase5 Test Dish" (branch 1,
+  marked unavailable) and promotion code `PHASE5TEST10` (10% off, never
+  expires).
+
+**Next: Phase 6 (polish, mobile layout for customer screens, deploy) —
+see frontend/PLAN.md Phase 6 for full spec.**
 
 **Also added this session:** `.claude/skills/scrutinize/SKILL.md` — a
 project skill ongleevs described from another repo (outsider-perspective

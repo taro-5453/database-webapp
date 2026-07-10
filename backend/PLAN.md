@@ -81,6 +81,7 @@ Goal: the queue → seat → open session → dashboard loop.
 Goal: the remaining staff CRUD, finishing the API surface.
 - `GET   /api/staff/kitchen` → fn_get_kitchen_orders
 - `PATCH /api/staff/orders/<id>` → fn_update_order_status
+- `GET   /api/staff/menu-items` → fn_get_menu_items (full branch inventory, for the manage-menu list)
 - `POST  /api/staff/menu-items` → fn_add_menu_item (tier_ids array)
 - `PATCH /api/staff/menu-items/<id>/availability` → fn_update_item_availability
 - `GET/POST /api/staff/promotions` → fn_get_promotions / fn_create_promotion

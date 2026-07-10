@@ -35,6 +35,12 @@ export function Header() {
                   <Link to="/staff/kitchen" className="hover:text-white/80">
                     Kitchen
                   </Link>
+                  <Link to="/staff/menu" className="hover:text-white/80">
+                    Menu
+                  </Link>
+                  <Link to="/staff/promotions" className="hover:text-white/80">
+                    Promotions
+                  </Link>
                   <span className="text-white/90">
                     {user.name} · {user.role}
                   </span>

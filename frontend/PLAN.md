@@ -57,6 +57,8 @@ Staff (staff login; branch is implied by the logged-in staff)
                                                     (for the open-session tier picker)
 - `GET   /api/staff/kitchen`                        unserved order lines
 - `PATCH /api/staff/orders/<id>`                    {status: ordered|preparing|served}
+- `GET   /api/staff/menu-items`                     every item at your branch, available or not
+                                                    (for the manage-menu list)
 - `POST  /api/staff/menu-items`                     {name, category?, price, tier_ids?} → 201
 - `PATCH /api/staff/menu-items/<id>/availability`   {available: bool}
 - `GET   /api/staff/promotions`
