@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { RequireCustomer } from "../lib/guards";
 import { api, ApiError } from "../lib/api";
 import type { Branch, Reservation } from "../lib/types";
+import { Header } from "../components/Header";
 
 export function meta() {
   return [{ title: "Reserve – Momo Paradise" }];
@@ -124,14 +125,17 @@ function ReserveForm() {
 
 export default function Reserve() {
   return (
-    <main className="pt-16 p-4 container mx-auto max-w-md">
-      <p>
-        <Link to="/">&larr; Back to branches</Link>
-      </p>
-      <h1>Make a reservation</h1>
-      <RequireCustomer>
-        <ReserveForm />
-      </RequireCustomer>
-    </main>
+    <>
+      <Header />
+      <main className="pt-4 p-4 container mx-auto max-w-md">
+        <p>
+          <Link to="/">&larr; Back to branches</Link>
+        </p>
+        <h1>Make a reservation</h1>
+        <RequireCustomer>
+          <ReserveForm />
+        </RequireCustomer>
+      </main>
+    </>
   );
 }

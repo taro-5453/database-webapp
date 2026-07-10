@@ -6,13 +6,16 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-10 bg-[#6B2A22] text-white">
-      <div className="container mx-auto flex items-center justify-between px-4 py-3">
-        <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+      <div className="container mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
+        <Link
+          to="/"
+          className="flex shrink-0 items-center gap-2 whitespace-nowrap text-lg font-semibold tracking-tight"
+        >
           <span aria-hidden="true">🍲</span>
           Momo Paradise
         </Link>
 
-        <nav className="flex items-center gap-5 text-sm font-medium">
+        <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium">
           {loading ? null : user ? (
             <>
               {user.kind === "customer" ? (

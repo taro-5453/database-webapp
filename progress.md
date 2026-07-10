@@ -214,8 +214,36 @@ discount). Menu/Promotions links added to Header nav.
   marked unavailable) and promotion code `PHASE5TEST10` (10% off, never
   expires).
 
-**Next: Phase 6 (polish, mobile layout for customer screens, deploy) —
-see frontend/PLAN.md Phase 6 for full spec.**
+**Also fixed (same session, before moving to Phase 6):** both
+scrutinize findings from the Phase 4/5 review — checkout no longer
+trusts a stale promotion validation after the code field is edited
+(cleared on every keystroke), and the queue's "skip for now" copy no
+longer promises a resume path that doesn't exist. Both pure frontend,
+browser-verified, no backend/DB involved.
+
+**Phase 6 DONE (polish + demo path), deploy explicitly skipped by
+decision — see frontend/PLAN.md Phase 6 for the full writeup:**
+- `<Header />` added to the 7 routes that were missing it (most of the
+  app had no nav bar since only home.tsx got it in Jay's redesign).
+- Real mobile bug fixed in Header.tsx: the wordmark could wrap
+  mid-word and nav had no flex-wrap at narrow widths — both fixed,
+  verified in a real 375px-wide headless browser (no more horizontal
+  overflow anywhere, checked home/login/register/reserve/branch-detail/
+  profile).
+- Decided with ongleevs to skip public deploy for the presentation —
+  Render free-tier cold-starts are a real live-demo risk. Demoing via
+  `docker-compose.yml` instead (already existed, built by Nathanon).
+  Verified end-to-end through the proxy at `localhost:8080`: register
+  -> profile (session cookie works same-origin), staff login ->
+  dashboard. If the course rubric turns out to require a public URL,
+  revisit — Taro would need to create the backend Render service first.
+- Loading/empty/error states were already in decent shape across the
+  app before this phase (checked every customer route) — no changes
+  needed there beyond the Header gap above.
+
+**Next: nothing blocking — frontend is feature-complete through Phase
+6. Remaining work is report/slides material (see top of this file) and
+whatever the professor's rubric asks for beyond the app itself.**
 
 **Also added this session:** `.claude/skills/scrutinize/SKILL.md` — a
 project skill ongleevs described from another repo (outsider-perspective

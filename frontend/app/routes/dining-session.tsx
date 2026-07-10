@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router";
 import { RequireCustomer } from "../lib/guards";
 import { api, ApiError } from "../lib/api";
 import type { MenuItem, OrderLine, Bill } from "../lib/types";
+import { Header } from "../components/Header";
 
 const POLL_INTERVAL_MS = 10_000;
 
@@ -130,14 +131,17 @@ export default function DiningSession() {
   const sessionId = Number(id);
 
   return (
-    <main className="pt-16 p-4 container mx-auto max-w-2xl">
-      <p>
-        <Link to="/">&larr; Back to branches</Link>
-      </p>
-      <h1>Dining session #{id}</h1>
-      <RequireCustomer>
-        <SessionContent sessionId={sessionId} />
-      </RequireCustomer>
-    </main>
+    <>
+      <Header />
+      <main className="pt-4 p-4 container mx-auto max-w-2xl">
+        <p>
+          <Link to="/">&larr; Back to branches</Link>
+        </p>
+        <h1>Dining session #{id}</h1>
+        <RequireCustomer>
+          <SessionContent sessionId={sessionId} />
+        </RequireCustomer>
+      </main>
+    </>
   );
 }

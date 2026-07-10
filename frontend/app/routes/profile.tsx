@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { RequireCustomer } from "../lib/guards";
 import { api, ApiError } from "../lib/api";
 import type { Membership, PointTransaction } from "../lib/types";
+import { Header } from "../components/Header";
 
 export function meta() {
   return [{ title: "Profile – Momo Paradise" }];
@@ -55,13 +56,16 @@ function ProfileContent() {
 
 export default function Profile() {
   return (
-    <main className="pt-16 p-4 container mx-auto max-w-md">
-      <p>
-        <Link to="/">&larr; Back to branches</Link>
-      </p>
-      <RequireCustomer>
-        <ProfileContent />
-      </RequireCustomer>
-    </main>
+    <>
+      <Header />
+      <main className="pt-4 p-4 container mx-auto max-w-md">
+        <p>
+          <Link to="/">&larr; Back to branches</Link>
+        </p>
+        <RequireCustomer>
+          <ProfileContent />
+        </RequireCustomer>
+      </main>
+    </>
   );
 }

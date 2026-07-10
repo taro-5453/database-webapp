@@ -135,6 +135,25 @@ Staff (staff login; branch is implied by the logged-in staff)
 - Done when: the deployed frontend logs in against the deployed
   backend.
 
+**Decision (2026-07-10): skipping public deploy for the course
+presentation.** Render's free tier cold-starts idle services (~30-60s
+first request), which is a real risk live in front of a professor. The
+team is presenting via `docker-compose.yml` at the repo root instead —
+backend + frontend + nginx proxy on one port (`docker compose up
+--build`, then `http://localhost:8080`), same-origin cookies, no CORS
+setup. This was verified end-to-end (register -> profile, staff login
+-> dashboard, both through the proxy) — see progress.md. Revisit if the
+course rubric turns out to require a public URL.
+
+Polish done: `<Header />` was missing on 7 routes (login, register,
+staff/login, profile, reserve, branch-detail, dining-session) — only
+`home.tsx` had it after Jay's redesign, so most of the app had no nav
+bar or visible logout. Added everywhere, `pt-16`->`pt-4` (Header is
+sticky-in-flow, doesn't need the old fixed-header offset). Also fixed
+a real mobile bug in `Header.tsx`: the "Momo Paradise" wordmark could
+wrap mid-word and the nav had no flex-wrap, both fixed with
+`whitespace-nowrap` on the logo + `flex-wrap` on the row.
+
 ---
 Tips
 - Test data lives in database/sample_data.sql (10 branches; menu
