@@ -117,8 +117,9 @@ function SeatDialog({
       ) : (
         <>
           <p>
-            Seated at table {tableId}. Open the buffet session now, or skip and open it
-            later.
+            Seated at table {tableId}. Open the buffet session now — if you skip, this
+            party won't appear on the queue or dashboard again, so you'll need to open
+            their session directly later.
           </p>
           <label>
             Tier

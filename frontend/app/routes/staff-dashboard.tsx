@@ -84,7 +84,13 @@ function CheckoutDialog({
       <label>
         Promotion code (optional)
         <div className="flex gap-2">
-          <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} />
+          <input
+            value={code}
+            onChange={(e) => {
+              setCode(e.target.value.toUpperCase());
+              setValidation(null);
+            }}
+          />
           <button type="button" onClick={checkCode} disabled={checking || !code.trim()}>
             {checking ? "Checking..." : "Check code"}
           </button>
