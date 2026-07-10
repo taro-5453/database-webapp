@@ -1,5 +1,76 @@
 # Project Notes / Progress
 
+## 📍 Session Handoff — 2026-07-10 (READ THIS FIRST)
+
+Quick orientation for anyone — human or Claude — opening this project
+fresh. The rest of this file is a chronological log kept by the team;
+skip down to "## Done" for that history. This block is the current
+snapshot.
+
+**State: the app is feature-complete and demo-ready.**
+- Database: schema + 27 SQL functions live on Render, verified (see
+  `database/` and `function/`).
+- Backend: Flask API code-complete through Phase 6 (`backend/PLAN.md`)
+  — every endpoint built and tested against Render.
+- Frontend: React Router app code-complete through Phase 6
+  (`frontend/PLAN.md`) — full customer flow (browse/reserve/order/
+  bill) and full staff flow (queue/seat/open session/kitchen/menu/
+  promotions/checkout) built, visually consistent, browser-verified
+  end to end (not just typechecked).
+- Latest commit: `a92a88d`, pushed to `origin/main`. Working tree
+  clean at handoff time.
+
+**Deploy decision — do not second-guess this without asking ongleevs:**
+The team chose NOT to deploy publicly (Render/Vercel) for the course
+presentation. Render's free tier cold-starts idle services (~30-60s
+first request), judged too risky live in front of a professor.
+Presenting via `docker-compose.yml` instead:
+```
+docker compose up --build
+open http://localhost:8080
+```
+Verified end-to-end (register→profile, staff login→dashboard, both
+through the proxy, same-origin cookies). Revisit only if the course
+rubric turns out to require a public URL — that would need Taro to
+create the backend Render service first (see `backend/PLAN.md` Phase 6
+for the manual dashboard steps, still un-done, and left un-done on
+purpose).
+
+**How to run/test locally — two options:**
+- Dev mode (hot reload, best for active work):
+  `cd backend && .venv/Scripts/python.exe wsgi.py` → :5001, and
+  `cd frontend && npm run dev` → :5173 (proxies `/api/*`, always
+  browse via :5173 not :5001 directly)
+- docker-compose (closer to the actual presentation setup, no hot
+  reload — rebuild after any code change): `docker compose up --build`
+  → http://localhost:8080
+
+**Known, accepted gaps — deliberate scope calls, not bugs to silently
+"fix":**
+- Staff queue's "seat → skip for now" leaves a reservation with no way
+  to resume opening its session from any screen (its misleading copy
+  was fixed; building an actual recovery screen was explicitly
+  deferred as a bigger feature, not forgotten)
+- Checkout's confirmation shows only `bill_id` + the discount applied,
+  not a full itemized bill — there's no backend endpoint to fetch a
+  finished bill after the fact, only what `POST .../checkout` returns
+- Dark mode was intentionally removed app-wide (matches home.tsx's
+  original light-only design from Jay/Sorawich's redesign). If a
+  teammate on a dark-mode OS says "the site looks different," that's
+  expected, not a regression.
+
+**Data hygiene:** test data occasionally piles up on branch 1
+(tables/sessions from development testing). If a demo run shows
+anything absurd (huge overtime numbers, names prefixed "ZZ ..."),
+check `GET /api/staff/dining-sessions` and clear stale ones through
+the normal staff checkout flow — never edit the DB directly for this.
+
+**What's actually left (not code):** report material (ER diagram,
+functions + example results, security & efficiency sections) and
+presentation slides — see "Next / To Do" just below, though that
+section pre-dates all the frontend work above and is otherwise stale.
+Nothing code-related is blocking.
+
 ## Done
 - ER diagram (Lucidchart)
 - schema.sql — 14 tables, live on Render, in repo
