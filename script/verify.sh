@@ -12,7 +12,7 @@
 # runs on crash via trap, and pre-cleans leftovers from a previous
 # aborted run).
 #
-# As admin it checks that all 25 fn_* functions are granted to
+# As admin it checks that all 26 fn_* functions are granted to
 # momo_app, that registration + both logins accept/reject
 # correctly, and warns if any NON-fixture rows still carry
 # placeholder (non-bcrypt) password hashes.
@@ -95,9 +95,9 @@ n=$(sql "$ADMIN_URL" "SELECT count(*) FROM pg_proc p
                       JOIN pg_namespace s ON s.oid = p.pronamespace
                       WHERE s.nspname = 'public' AND p.proname LIKE 'fn\_%'
                         AND has_function_privilege('momo_app', p.oid, 'EXECUTE')")
-[[ "$n" == "25" ]] \
-  && ok "momo_app has EXECUTE on all 25 fn_* functions" \
-  || bad "expected 25 fn_* functions granted to momo_app" "got: $n"
+[[ "$n" == "26" ]] \
+  && ok "momo_app has EXECUTE on all 26 fn_* functions" \
+  || bad "expected 26 fn_* functions granted to momo_app" "got: $n"
 
 echo
 echo "== fixture =="

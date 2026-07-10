@@ -82,6 +82,8 @@
     own-branch ids; customers CAN'T call these at all
 - Frontend - React Router (friends' task): frontend/PLAN.md has the phased plan +
   full endpoint reference; dirs scaffolded; key rule: fetch with credentials:'include'
+  - added fn_get_tiers (fn #26) + GET /api/staff/tiers for the open-session tier picker
+    (friend flagged the missing endpoint); deployed, tested live, verify.sh now expects 26
 
 
 ## Notes to self

@@ -72,6 +72,7 @@ Goal: the queue → seat → open session → dashboard loop.
 - `POST /api/staff/reservations/<id>/seat` → fn_seat_reservation
 - `POST /api/staff/dining-sessions` → fn_open_session (walk-in or pre-seated)
 - `GET  /api/staff/dining-sessions` → fn_get_active_sessions
+- `GET  /api/staff/tiers` → fn_get_tiers (branch's buffet tiers, for the tier picker)
 - staff_id / branch_id from the cookie, never the request body
 - Done when: seat a queued sample reservation and see it appear on
   the active-sessions dashboard, minutes_remaining included.

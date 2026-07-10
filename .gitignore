@@ -24,3 +24,6 @@ frontend/dist/
 
 # Claude
 .claude
+
+# local backup 
+/bak/

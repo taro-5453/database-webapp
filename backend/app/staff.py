@@ -58,6 +58,14 @@ def active_sessions():
     return jsonify(call_fn("fn_get_active_sessions", session["branch_id"]))
 
 
+@bp.get("/tiers")
+@staff_required
+def tiers():
+    """The staff member's branch's buffet tiers — fills the tier
+    picker on the open-session and add-menu-item screens."""
+    return jsonify(call_fn("fn_get_tiers", session["branch_id"]))
+
+
 # ---------- Phase 5: kitchen, menu, promotions, checkout ----------
 
 @bp.get("/kitchen")

@@ -53,6 +53,8 @@ Staff (staff login; branch is implied by the logged-in staff)
                                                     guest_count, reservation_id?} → 201
 - `GET   /api/staff/dining-sessions`                dashboard, minutes_remaining
                                                     (negative = overtime)
+- `GET   /api/staff/tiers`                          buffet tiers at your branch
+                                                    (for the open-session tier picker)
 - `GET   /api/staff/kitchen`                        unserved order lines
 - `PATCH /api/staff/orders/<id>`                    {status: ordered|preparing|served}
 - `POST  /api/staff/menu-items`                     {name, category?, price, tier_ids?} → 201
@@ -105,7 +107,8 @@ Staff (staff login; branch is implied by the logged-in staff)
 - /staff — dashboard of active sessions; highlight negative
   minutes_remaining (overtime) in red; poll ~30s
 - /staff/queue — waiting list; "seat" button opens dialog:
-  pick table → seat → optional "open session" (tier, guest count)
+  pick table → seat → optional "open session" (tier from
+  GET /api/staff/tiers, guest count)
 - /staff/kitchen — unserved lines, oldest first; one-tap
   status advance (ordered → preparing → served); poll ~10s
 - Done when: queue→seat→open→order→kitchen→served round-trips
