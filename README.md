@@ -53,6 +53,8 @@ backend/                   Flask API (phased plan in backend/PLAN.md)
 frontend/                  React Router app (phased plan in frontend/PLAN.md)
 ├── app/                   routes/, components/, lib/ (created by phases)
 └── public/                static assets
+docker-compose.yml         backend + frontend + nginx proxy, one command
+docker/                    nginx reverse-proxy image for compose
 progress.md                running task list / project notes
 ```
 
@@ -97,3 +99,13 @@ deploying).
   `FLASK_SECRET_KEY`, optional `FRONTEND_ORIGIN`
 - Smoke test: `./script/smoke_api.sh [API_URL]`
 - Full endpoint list + Render deploy steps: `backend/PLAN.md`
+
+## Run the whole app (Docker Compose)
+Backend + frontend + an nginx proxy, all together:
+```sh
+docker compose up --build      # then open http://localhost:8080
+```
+The proxy serves one origin — `/api/*` → backend, everything else →
+frontend — so the session cookie works with no CORS setup. Needs a
+repo-root `.env` with `MOMO_APP_URL` + `FLASK_SECRET_KEY`; the
+database stays on Render.

@@ -84,6 +84,11 @@
   full endpoint reference; dirs scaffolded; key rule: fetch with credentials:'include'
   - added fn_get_tiers (fn #26) + GET /api/staff/tiers for the open-session tier picker
     (friend flagged the missing endpoint); deployed, tested live, verify.sh now expects 26
+  - docker-compose.yml (repo root, committed): backend + frontend + nginx proxy on :8080;
+    proxy routes /api->backend, else->frontend (same-origin cookies, no CORS). frontend is
+    SSR (react-router-serve :3000, uses friend's existing frontend/Dockerfile untouched).
+    Tested: register->me cookie flow works through proxy. Needs root .env (MOMO_APP_URL+secret).
+    nginx config baked into docker/Dockerfile (bind-mount hit Docker Desktop file-sharing block).
 
 
 ## Notes to self

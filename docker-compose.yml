@@ -1,0 +1,41 @@
+# Run the whole app locally: Flask API + React Router frontend,
+# behind an nginx reverse proxy so the browser sees ONE origin
+# (http://localhost:8080). /api/* -> backend, everything else ->
+# frontend. Same-origin means the session cookie just works — no
+# CORS or cross-site cookie flags — mirroring the Vite dev proxy the
+# frontend already uses in `npm run dev`.
+#
+# The database stays on Render. Create a repo-root .env (gitignored)
+# with at least:
+#   MOMO_APP_URL='postgresql://momo_app:...@host/db?sslmode=require&channel_binding=disable'
+#   FLASK_SECRET_KEY='...'
+# (see backend/PLAN.md). NOTE: env_file passes the WHOLE .env to the
+# backend, which may also hold the admin DB_URL — fine locally, but
+# on a real host give the backend only those two vars.
+#
+#   docker compose up --build
+#   open http://localhost:8080
+
+services:
+  backend:
+    build: ./backend
+    env_file: .env
+    expose:
+      - "8000"
+
+  frontend:
+    build: ./frontend
+    environment:
+      PORT: "3000"
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+
+  proxy:
+    build: ./docker
+    ports:
+      - "8080:80"
+    depends_on:
+      - frontend
+      - backend
