@@ -82,13 +82,13 @@ function SeatDialog({
   }
 
   return (
-    <div className="mt-2 rounded-md border border-gray-300 p-3 dark:border-gray-700">
+    <div className="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
       {!seated ? (
         <>
           <label>
             Table
             {!tables ? (
-              <p>Loading tables...</p>
+              <p className="text-gray-500">Loading tables...</p>
             ) : tables.length === 0 ? (
               <p role="alert">No table fits a party of {entry.party_size} right now.</p>
             ) : (
@@ -116,7 +116,7 @@ function SeatDialog({
         </>
       ) : (
         <>
-          <p>
+          <p className="text-sm text-gray-600">
             Seated at table {tableId}. Open the buffet session now — if you skip, this
             party won't appear on the queue or dashboard again, so you'll need to open
             their session directly later.
@@ -124,7 +124,7 @@ function SeatDialog({
           <label>
             Tier
             {!tiers ? (
-              <p>Loading tiers...</p>
+              <p className="text-gray-500">Loading tiers...</p>
             ) : (
               <select value={tierId} onChange={(e) => setTierId(Number(e.target.value))}>
                 {tiers.map((t) => (
@@ -182,17 +182,18 @@ function QueueList({ branchId }: { branchId: number }) {
   }
 
   if (error) return <p role="alert">{error}</p>;
-  if (!queue) return <p>Loading queue...</p>;
-  if (queue.length === 0) return <p>No one is waiting.</p>;
+  if (!queue) return <p className="text-gray-500">Loading queue...</p>;
+  if (queue.length === 0) return <p className="text-gray-500">No one is waiting.</p>;
 
   return (
     <ul>
       {queue.map((entry) => (
-        <li key={entry.reservation_id} className="rounded-md border border-gray-200 p-3 dark:border-gray-800">
+        <li key={entry.reservation_id} className="card">
           <div className="flex items-center justify-between">
-            <span>
-              #{entry.queue_position} — {entry.customer_name} ({entry.phone ?? "no phone"}) —
-              party of {entry.party_size}
+            <span className="text-gray-900">
+              <span className="font-semibold">#{entry.queue_position}</span> —{" "}
+              {entry.customer_name} ({entry.phone ?? "no phone"}) — party of{" "}
+              {entry.party_size}
             </span>
             {seatingId !== entry.reservation_id && (
               <button onClick={() => setSeatingId(entry.reservation_id)}>Seat</button>
@@ -218,14 +219,17 @@ export default function StaffQueue() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-2xl">
-        <p>
-          <Link to="/staff">&larr; Dashboard</Link>
-        </p>
-        <h1>Queue</h1>
-        <RequireStaff>
-          {user?.kind === "staff" && <QueueList branchId={user.branch_id} />}
-        </RequireStaff>
+      <main>
+        <div className="page max-w-2xl">
+          <p className="text-sm text-gray-500">
+            <Link to="/staff">&larr; Dashboard</Link>
+          </p>
+          <p className="eyebrow">STAFF</p>
+          <h1>Queue</h1>
+          <RequireStaff>
+            {user?.kind === "staff" && <QueueList branchId={user.branch_id} />}
+          </RequireStaff>
+        </div>
       </main>
     </>
   );

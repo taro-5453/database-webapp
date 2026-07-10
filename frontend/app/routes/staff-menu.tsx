@@ -68,7 +68,7 @@ function AddItemForm({ tiers, onAdded }: { tiers: Tier[] | null; onAdded: () => 
       <fieldset>
         <legend>Available to tiers</legend>
         {!tiers ? (
-          <p>Loading tiers...</p>
+          <p className="text-gray-500">Loading tiers...</p>
         ) : (
           tiers.map((t) => (
             <label key={t.tier_id}>
@@ -132,22 +132,22 @@ function ItemsList() {
       <h2>Items</h2>
       {error && <p role="alert">{error}</p>}
       {!items ? (
-        <p>Loading items...</p>
+        <p className="text-gray-500">Loading items...</p>
       ) : items.length === 0 ? (
-        <p>No items yet.</p>
+        <p className="text-gray-500">No items yet.</p>
       ) : (
         <ul>
           {items.map((item) => (
             <li
               key={item.item_id}
-              className={
-                "flex items-center justify-between rounded-md border border-gray-200 p-3 dark:border-gray-800" +
-                (item.available ? "" : " opacity-50")
-              }
+              className={"card flex items-center justify-between" + (item.available ? "" : " opacity-50")}
             >
-              <span>
-                {item.name} ({item.category}) — ${item.price.toFixed(2)}
-              </span>
+              <div>
+                <p className="font-medium text-gray-900">{item.name}</p>
+                <p className="text-sm text-gray-500">
+                  {item.category} · ${item.price.toFixed(2)}
+                </p>
+              </div>
               <button
                 onClick={() => toggleAvailability(item)}
                 disabled={togglingId === item.item_id}
@@ -170,14 +170,17 @@ export default function StaffMenu() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-2xl">
-        <p>
-          <Link to="/staff">&larr; Dashboard</Link>
-        </p>
-        <h1>Manage menu</h1>
-        <RequireStaff>
-          <ItemsList />
-        </RequireStaff>
+      <main>
+        <div className="page max-w-2xl">
+          <p className="text-sm text-gray-500">
+            <Link to="/staff">&larr; Dashboard</Link>
+          </p>
+          <p className="eyebrow">STAFF</p>
+          <h1>Manage menu</h1>
+          <RequireStaff>
+            <ItemsList />
+          </RequireStaff>
+        </div>
       </main>
     </>
   );

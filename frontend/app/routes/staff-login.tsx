@@ -33,30 +33,33 @@ export default function StaffLogin() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-sm">
-        <h1>Staff log in</h1>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Name
-            <input value={name} onChange={(e) => setName(e.target.value)} required />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
-          {error && <p role="alert">{error}</p>}
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Logging in..." : "Log in"}
-          </button>
-        </form>
-        <p>
-          Not staff? <Link to="/login">Customer log in</Link>
-        </p>
+      <main>
+        <div className="page max-w-sm">
+          <p className="eyebrow">STAFF PORTAL</p>
+          <h1>Staff log in</h1>
+          <form onSubmit={handleSubmit}>
+            <label>
+              Name
+              <input value={name} onChange={(e) => setName(e.target.value)} required />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </label>
+            {error && <p role="alert">{error}</p>}
+            <button type="submit" disabled={submitting}>
+              {submitting ? "Logging in..." : "Log in"}
+            </button>
+          </form>
+          <p className="text-sm text-gray-500">
+            Not staff? <Link to="/login">Customer log in</Link>
+          </p>
+        </div>
       </main>
     </>
   );

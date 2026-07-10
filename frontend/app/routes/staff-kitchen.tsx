@@ -51,21 +51,32 @@ function KitchenList() {
   }
 
   if (error) return <p role="alert">{error}</p>;
-  if (!lines) return <p>Loading kitchen orders...</p>;
-  if (lines.length === 0) return <p>Kitchen is caught up — nothing unserved.</p>;
+  if (!lines) return <p className="text-gray-500">Loading kitchen orders...</p>;
+  if (lines.length === 0)
+    return <p className="text-gray-500">Kitchen is caught up — nothing unserved.</p>;
+
+  const badgeStyle: Record<string, string> = {
+    ordered: "bg-gray-100 text-gray-700",
+    preparing: "bg-amber-100 text-amber-700",
+  };
 
   return (
     <ul>
       {lines.map((line) => {
         const step = NEXT_STATUS[line.status];
         return (
-          <li
-            key={line.order_line_id}
-            className="flex items-center justify-between rounded-md border border-gray-200 p-3 dark:border-gray-800"
-          >
-            <span>
-              Table {line.table_id} — {line.quantity}x {line.item_name} — {line.status} —{" "}
-              {new Date(line.ordered_at).toLocaleTimeString()}
+          <li key={line.order_line_id} className="card flex items-center justify-between">
+            <span className="text-gray-900">
+              <span className="font-semibold">Table {line.table_id}</span> — {line.quantity}x{" "}
+              {line.item_name}{" "}
+              <span
+                className={`ml-1 rounded-full px-2.5 py-1 text-xs font-semibold ${badgeStyle[line.status] ?? "bg-gray-100 text-gray-700"}`}
+              >
+                {line.status}
+              </span>{" "}
+              <span className="text-sm text-gray-500">
+                {new Date(line.ordered_at).toLocaleTimeString()}
+              </span>
             </span>
             {step && (
               <button onClick={() => advance(line)} disabled={updatingId === line.order_line_id}>
@@ -83,14 +94,17 @@ export default function StaffKitchen() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-2xl">
-        <p>
-          <Link to="/staff">&larr; Dashboard</Link>
-        </p>
-        <h1>Kitchen view</h1>
-        <RequireStaff>
-          <KitchenList />
-        </RequireStaff>
+      <main>
+        <div className="page max-w-2xl">
+          <p className="text-sm text-gray-500">
+            <Link to="/staff">&larr; Dashboard</Link>
+          </p>
+          <p className="eyebrow">STAFF</p>
+          <h1>Kitchen view</h1>
+          <RequireStaff>
+            <KitchenList />
+          </RequireStaff>
+        </div>
       </main>
     </>
   );

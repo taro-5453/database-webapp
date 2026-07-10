@@ -33,38 +33,41 @@ export default function Login() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-sm">
-        <h1>Customer log in</h1>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
-          {error && <p role="alert">{error}</p>}
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Logging in..." : "Log in"}
-          </button>
-        </form>
-        <p>
-          No account? <Link to="/register">Register</Link>
-        </p>
-        <p>
-          Staff? <Link to="/staff/login">Staff log in</Link>
-        </p>
+      <main>
+        <div className="page max-w-sm">
+          <p className="eyebrow">WELCOME BACK</p>
+          <h1>Log in</h1>
+          <form onSubmit={handleSubmit}>
+            <label>
+              Email
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </label>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </label>
+            {error && <p role="alert">{error}</p>}
+            <button type="submit" disabled={submitting}>
+              {submitting ? "Logging in..." : "Log in"}
+            </button>
+          </form>
+          <p className="text-sm text-gray-500">
+            No account? <Link to="/register">Register</Link>
+          </p>
+          <p className="text-sm text-gray-500">
+            Staff? <Link to="/staff/login">Staff log in</Link>
+          </p>
+        </div>
       </main>
     </>
   );

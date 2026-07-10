@@ -114,7 +114,7 @@ function ReserveForm() {
         {submitting ? "Reserving..." : "Reserve"}
       </button>
       {result && (
-        <p>
+        <p className="rounded-lg border border-green-200 bg-green-50 px-3.5 py-2.5 text-sm text-green-700">
           Reservation #{result.reservation_id} — status: <strong>{result.status}</strong>.
           A staff member will seat you when your table is ready.
         </p>
@@ -127,14 +127,17 @@ export default function Reserve() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-md">
-        <p>
-          <Link to="/">&larr; Back to branches</Link>
-        </p>
-        <h1>Make a reservation</h1>
-        <RequireCustomer>
-          <ReserveForm />
-        </RequireCustomer>
+      <main>
+        <div className="page max-w-md">
+          <p className="text-sm text-gray-500">
+            <Link to="/">&larr; Back to branches</Link>
+          </p>
+          <p className="eyebrow">SECURE YOUR TABLE</p>
+          <h1>Make a reservation</h1>
+          <RequireCustomer>
+            <ReserveForm />
+          </RequireCustomer>
+        </div>
       </main>
     </>
   );

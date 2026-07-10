@@ -7,24 +7,37 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+  @apply bg-white;
 }
 
 @layer base {
+  main {
+    @apply min-h-screen bg-white;
+  }
+
+  h1 {
+    @apply mt-2 text-3xl font-bold tracking-tight text-gray-900;
+  }
+
+  h2 {
+    @apply mt-8 mb-3 text-lg font-semibold text-gray-900;
+  }
+
+  main a {
+    @apply text-[#C1502F] hover:text-[#a5432a];
+  }
+
   form {
-    @apply flex flex-col gap-3 my-4;
+    @apply my-6 flex max-w-md flex-col gap-4 rounded-2xl border border-gray-200
+      bg-white p-6 shadow-sm;
   }
 
   form label {
-    @apply flex flex-col gap-1 text-sm font-medium text-gray-700 dark:text-gray-300;
+    @apply flex flex-col gap-1.5 text-sm font-medium text-gray-700;
   }
 
   form fieldset {
-    @apply flex flex-col gap-2 rounded-md border border-gray-300 p-3 dark:border-gray-700;
+    @apply flex flex-col gap-2 rounded-xl border border-gray-200 p-4;
   }
 
   form fieldset label {
@@ -33,32 +46,42 @@ body {
 
   input,
   select {
-    @apply rounded-md border border-gray-300 bg-white px-3 py-2 text-base text-gray-900
-      dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100;
+    @apply rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-base
+      text-gray-900 outline-none transition focus:border-[#C1502F]
+      focus:ring-2 focus:ring-[#C1502F]/20;
   }
 
-  input[type="radio"] {
-    @apply w-auto;
+  input[type="radio"],
+  input[type="checkbox"] {
+    @apply w-auto accent-[#C1502F];
   }
 
   button {
-    @apply self-start rounded-md bg-gray-900 px-4 py-2 font-medium text-white
-      disabled:cursor-not-allowed disabled:opacity-50 dark:bg-gray-100 dark:text-gray-900;
+    @apply self-start rounded-lg bg-[#6B2A22] px-5 py-2.5 font-semibold text-white
+      shadow-sm transition hover:bg-[#5a221b] disabled:cursor-not-allowed
+      disabled:opacity-50;
   }
 
   [role="alert"] {
-    @apply font-medium text-red-600 dark:text-red-400;
-  }
-
-  h1 {
-    @apply mt-2 text-2xl font-semibold;
-  }
-
-  h2 {
-    @apply mt-6 mb-2 text-lg font-semibold;
+    @apply rounded-lg border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm
+      font-medium text-red-700;
   }
 
   ul {
-    @apply flex flex-col gap-2;
+    @apply flex flex-col gap-3;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-sm font-bold tracking-wide text-[#C1502F];
+  }
+
+  .card {
+    @apply rounded-2xl border border-gray-200 bg-white p-4 shadow-sm;
+  }
+
+  .page {
+    @apply container mx-auto px-4 py-10;
   }
 }

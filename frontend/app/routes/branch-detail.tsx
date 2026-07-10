@@ -35,39 +35,45 @@ export default function BranchDetail() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-md">
-        <p>
-          <Link to="/">&larr; Back to branches</Link>
-        </p>
-        <h1>Branch #{id}</h1>
-        <form onSubmit={checkAvailability}>
-          <label>
-            Party size
-            <input
-              type="number"
-              min={1}
-              value={partySize}
-              onChange={(e) => setPartySize(Number(e.target.value))}
-              required
-            />
-          </label>
-          <button type="submit" disabled={loading}>
-            {loading ? "Checking..." : "Check availability"}
-          </button>
-        </form>
-        {error && <p role="alert">{error}</p>}
-        {tables &&
-          (tables.length === 0 ? (
-            <p>No tables available for that party size right now.</p>
-          ) : (
-            <ul>
-              {tables.map((t) => (
-                <li key={t.table_id}>
-                  Table {t.table_id} — seats {t.capacity} ({t.status})
-                </li>
-              ))}
-            </ul>
-          ))}
+      <main>
+        <div className="page max-w-md">
+          <p className="text-sm text-gray-500">
+            <Link to="/">&larr; Back to branches</Link>
+          </p>
+          <p className="eyebrow">CHECK AVAILABILITY</p>
+          <h1>Branch #{id}</h1>
+          <form onSubmit={checkAvailability}>
+            <label>
+              Party size
+              <input
+                type="number"
+                min={1}
+                value={partySize}
+                onChange={(e) => setPartySize(Number(e.target.value))}
+                required
+              />
+            </label>
+            <button type="submit" disabled={loading}>
+              {loading ? "Checking..." : "Check availability"}
+            </button>
+          </form>
+          {error && <p role="alert">{error}</p>}
+          {tables &&
+            (tables.length === 0 ? (
+              <p className="text-gray-500">No tables available for that party size right now.</p>
+            ) : (
+              <ul>
+                {tables.map((t) => (
+                  <li key={t.table_id} className="card flex items-center justify-between">
+                    <span className="font-medium text-gray-900">Table {t.table_id}</span>
+                    <span className="text-sm text-gray-500">
+                      seats {t.capacity} · {t.status}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ))}
+        </div>
       </main>
     </>
   );

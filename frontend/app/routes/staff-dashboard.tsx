@@ -67,20 +67,22 @@ function CheckoutDialog({
 
   if (result) {
     return (
-      <div className="mt-2 rounded-md border border-gray-300 p-3 dark:border-gray-700">
-        <p>
+      <div className="mt-3 rounded-xl border border-green-200 bg-green-50 p-4">
+        <p className="text-green-800">
           Checked out — Bill #{result.bill_id}
           {validation?.is_valid &&
             ` (${validation.discount_type === "percent" ? `${validation.discount}%` : `$${validation.discount}`} off applied)`}
           .
         </p>
-        <button onClick={onDone}>Close</button>
+        <button onClick={onDone} className="mt-2">
+          Close
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="mt-2 rounded-md border border-gray-300 p-3 dark:border-gray-700">
+    <div className="mt-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
       <label>
         Promotion code (optional)
         <div className="flex gap-2">
@@ -157,16 +159,19 @@ function SessionsList() {
       {sessions.map((s) => {
         const overtime = s.minutes_remaining < 0;
         return (
-          <li
-            key={s.session_id}
-            className="rounded-md border border-gray-200 p-3 dark:border-gray-800"
-          >
+          <li key={s.session_id} className="card">
             <div className="flex items-center justify-between">
-              <span>
+              <span className="font-medium text-gray-900">
                 Table {s.table_id} — {s.customer_name} ({s.guest_count} guests) — {s.tier_name}
               </span>
               <div className="flex items-center gap-3">
-                <span className={overtime ? "font-semibold text-red-600 dark:text-red-400" : ""}>
+                <span
+                  className={
+                    overtime
+                      ? "rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700"
+                      : "rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700"
+                  }
+                >
                   {overtime
                     ? `${Math.abs(s.minutes_remaining)} min overtime`
                     : `${s.minutes_remaining} min left`}
@@ -176,7 +181,7 @@ function SessionsList() {
                 )}
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-1 text-sm text-gray-500">
               Server: {s.staff_name} · started {new Date(s.start_time).toLocaleTimeString()} ·
               ends {new Date(s.ends_at).toLocaleTimeString()}
             </p>
@@ -198,17 +203,20 @@ export default function StaffDashboard() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-2xl">
-        <h1>Active sessions</h1>
-        <p className="flex gap-4 text-sm">
-          <Link to="/staff/queue">Queue</Link>
-          <Link to="/staff/kitchen">Kitchen</Link>
-          <Link to="/staff/menu">Menu</Link>
-          <Link to="/staff/promotions">Promotions</Link>
-        </p>
-        <RequireStaff>
-          <SessionsList />
-        </RequireStaff>
+      <main>
+        <div className="page max-w-3xl">
+          <p className="eyebrow">STAFF</p>
+          <h1>Active sessions</h1>
+          <nav className="mt-3 mb-6 flex gap-4 text-sm font-medium">
+            <Link to="/staff/queue">Queue</Link>
+            <Link to="/staff/kitchen">Kitchen</Link>
+            <Link to="/staff/menu">Menu</Link>
+            <Link to="/staff/promotions">Promotions</Link>
+          </nav>
+          <RequireStaff>
+            <SessionsList />
+          </RequireStaff>
+        </div>
       </main>
     </>
   );

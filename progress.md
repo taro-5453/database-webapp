@@ -241,6 +241,42 @@ decision — see frontend/PLAN.md Phase 6 for the full writeup:**
   app before this phase (checked every customer route) — no changes
   needed there beyond the Header gap above.
 
+**Follow-up scrutinize pass (same day, after ongleevs asked "can I
+present this as-is?"):** actually screenshotted every page instead of
+just reasoning about it — found visual polish only existed on
+home.tsx; the other 13 routes (login/register/staff-login/profile/
+reserve/branch-detail/dining-session + all 5 staff screens) were still
+bare `@layer base` styling, no cards/spacing/brand color. Also found
+the live demo dashboard had absurd leftover test data ("2396 min
+overtime", a customer named "ZZ P4FE Cust") that would look broken to
+someone unfamiliar with the test history.
+- Cleaned the two stale sessions via normal `fn_checkout` calls (not
+  data hacks) — branch 1 dashboard now shows only real in-progress
+  test sessions.
+- Restyled the whole app to match home.tsx's design language: rewrote
+  `app.css`'s `@layer base` (brand-colored buttons/inputs/focus rings,
+  card-style forms, banner-style alerts) so every plain form-based page
+  picked up the look from ONE file change, then per-page passed on
+  layout wrappers (home.tsx's spacious `container mx-auto px-4 py-10`
+  pattern) and card-ified every list (branches' tables, dining-session's
+  menu/orders/bill, and all 5 staff screens' rows) with status badges
+  (order status, overtime, promo active/expired) instead of plain text.
+  Added `.card`/`.eyebrow`/`.page` reusable classes in `@layer
+  components` for this.
+- Caught and fixed a real bug mid-restyle: an unclosed `<div>` in
+  register.tsx broke the page (Vite error overlay) — `npm run
+  typecheck` did NOT catch it, only an actual fresh page load did.
+  Worth remembering: tsc alone isn't sufficient proof a page renders;
+  always load it in a real browser after nontrivial JSX restructuring.
+- Verified the flagship dining-session screen for real: registered a
+  customer, reserved, seated + opened a session as staff, placed an
+  order, confirmed the bill math ($798 buffet + $49 extra = $847
+  running total) — not just a static screenshot, an actual working
+  round-trip on the restyled UI. Cleaned up that test session after.
+- Rebuilt docker-compose (`docker compose up --build`) so
+  `localhost:8080` reflects the restyled app too, not just the dev
+  server.
+
 **Next: nothing blocking — frontend is feature-complete through Phase
 6. Remaining work is report/slides material (see top of this file) and
 whatever the professor's rubric asks for beyond the app itself.**

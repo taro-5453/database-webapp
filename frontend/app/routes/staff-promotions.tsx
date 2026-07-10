@@ -117,23 +117,33 @@ function PromotionsList() {
       <h2>Promotions</h2>
       {error && <p role="alert">{error}</p>}
       {!promos ? (
-        <p>Loading promotions...</p>
+        <p className="text-gray-500">Loading promotions...</p>
       ) : promos.length === 0 ? (
-        <p>No promotions yet.</p>
+        <p className="text-gray-500">No promotions yet.</p>
       ) : (
         <ul>
           {promos.map((p) => (
             <li
               key={p.promotion_id}
-              className={
-                "rounded-md border border-gray-200 p-3 dark:border-gray-800" +
-                (p.is_active ? "" : " opacity-50")
-              }
+              className={"card flex items-center justify-between" + (p.is_active ? "" : " opacity-50")}
             >
-              <strong>{p.code}</strong> —{" "}
-              {p.discount_type === "percent" ? `${p.discount}%` : `$${p.discount.toFixed(2)}`}{" "}
-              off — {p.valid_until ? `expires ${p.valid_until}` : "never expires"} —{" "}
-              {p.is_active ? "active" : "expired"} (by {p.created_by})
+              <div>
+                <p className="font-semibold text-gray-900">{p.code}</p>
+                <p className="text-sm text-gray-500">
+                  {p.discount_type === "percent" ? `${p.discount}%` : `$${p.discount.toFixed(2)}`}{" "}
+                  off · {p.valid_until ? `expires ${p.valid_until}` : "never expires"} · by{" "}
+                  {p.created_by}
+                </p>
+              </div>
+              <span
+                className={
+                  p.is_active
+                    ? "rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700"
+                    : "rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700"
+                }
+              >
+                {p.is_active ? "active" : "expired"}
+              </span>
             </li>
           ))}
         </ul>
@@ -146,14 +156,17 @@ export default function StaffPromotions() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-2xl">
-        <p>
-          <Link to="/staff">&larr; Dashboard</Link>
-        </p>
-        <h1>Manage promotions</h1>
-        <RequireStaff>
-          <PromotionsList />
-        </RequireStaff>
+      <main>
+        <div className="page max-w-2xl">
+          <p className="text-sm text-gray-500">
+            <Link to="/staff">&larr; Dashboard</Link>
+          </p>
+          <p className="eyebrow">STAFF</p>
+          <h1>Manage promotions</h1>
+          <RequireStaff>
+            <PromotionsList />
+          </RequireStaff>
+        </div>
       </main>
     </>
   );

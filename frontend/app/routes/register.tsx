@@ -35,9 +35,11 @@ export default function Register() {
   return (
     <>
       <Header />
-      <main className="pt-4 p-4 container mx-auto max-w-sm">
-        <h1>Create an account</h1>
-        <form onSubmit={handleSubmit}>
+      <main>
+        <div className="page max-w-sm">
+          <p className="eyebrow">JOIN MOMO PARADISE</p>
+          <h1>Create an account</h1>
+          <form onSubmit={handleSubmit}>
           <label>
             Name
             <input value={name} onChange={(e) => setName(e.target.value)} required />
@@ -65,14 +67,15 @@ export default function Register() {
               required
             />
           </label>
-          {error && <p role="alert">{error}</p>}
-          <button type="submit" disabled={submitting}>
-            {submitting ? "Creating account..." : "Register"}
-          </button>
-        </form>
-        <p>
-          Already have an account? <Link to="/login">Log in</Link>
-        </p>
+            {error && <p role="alert">{error}</p>}
+            <button type="submit" disabled={submitting}>
+              {submitting ? "Creating account..." : "Register"}
+            </button>
+          </form>
+          <p className="text-sm text-gray-500">
+            Already have an account? <Link to="/login">Log in</Link>
+          </p>
+        </div>
       </main>
     </>
   );
