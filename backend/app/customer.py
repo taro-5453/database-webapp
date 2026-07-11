@@ -6,7 +6,7 @@ flow (menu -> order -> live bill). customer_id always comes from
 the session cookie, never from the URL or body; dining-session
 routes verify ownership through fn_get_session_owner.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify, request, session
 
@@ -39,6 +39,13 @@ def available_tables(branch_id: int):
     return jsonify(call_fn("fn_get_available_tables", branch_id, party_size))
 
 
+@bp.get("/branches/<int:branch_id>/tiers")
+def branch_tiers(branch_id: int):
+    """A branch's buffet tiers + prices — public (like /branches) so
+    customers see what dining will cost while making a reservation."""
+    return jsonify(call_fn("fn_get_tiers", branch_id))
+
+
 @bp.get("/me/membership")
 @customer_required
 def my_membership():
@@ -62,6 +69,7 @@ def create_reservation():
     data = request.get_json(silent=True) or {}
     branch_id = int_field(data, "branch_id")
     party_size = int_field(data, "party_size")
+    tier_id = int_field(data, "tier_id", required=False)  # None = decide when seated
 
     slot_time = None  # NULL slot_time = join the walk-in queue
     if data.get("slot_time"):
@@ -69,13 +77,18 @@ def create_reservation():
             slot_time = datetime.fromisoformat(data["slot_time"])
         except (TypeError, ValueError):
             raise ApiError(400, "slot_time must be ISO 8601, e.g. 2026-07-15T18:00:00")
+        if slot_time.tzinfo is not None:
+            # the fn takes a plain TIMESTAMP; an aware datetime would be
+            # sent as timestamptz and match no function (500). Normalize
+            # to naive UTC instead of erroring.
+            slot_time = slot_time.astimezone(timezone.utc).replace(tzinfo=None)
 
     # tables are assigned by staff at seating time (reservation_table),
     # so no table_id here; the fn rejects parties the branch can't
     # seat even combining every table
     reservation_id = call_fn_scalar(
         "fn_create_reservation",
-        session["customer_id"], branch_id, slot_time, party_size,
+        session["customer_id"], branch_id, slot_time, party_size, tier_id,
     )
     status = "queued" if slot_time is None else "reserved"
     return jsonify({"reservation_id": reservation_id, "status": status}), 201

@@ -41,6 +41,7 @@ Customer (logged in)
 - `GET  /api/me/points`          → point transactions
 - `POST /api/reservations`       {branch_id, party_size} = join queue;
                                  + slot_time (ISO) = timed booking → 201
+                                 + tier_id? = preferred buffet tier
                                  (400 if the party exceeds the branch's
                                  combined table capacity; tables are
                                  assigned by staff at seating time)

@@ -81,18 +81,29 @@ export default function BranchDetail() {
                 ))}
               </ul>
             ) : combinedCapacity >= checkedSize ? (
-              <p className="text-gray-500">
-                No single table seats {checkedSize}, but staff can combine tables — the free
-                tables here seat {combinedCapacity} in total, so you can still reserve.
+              <p className="rounded-lg border border-green-200 bg-green-50 px-3.5 py-2.5 text-sm text-green-700">
+                Yes — a party of {checkedSize} fits here ({combinedCapacity} seats free). No
+                single table is that big, so staff will combine tables for you. Go ahead and
+                reserve below.
               </p>
             ) : (
               <p className="text-gray-500">
                 This branch can&apos;t seat a party of {checkedSize} right now
                 {combinedCapacity > 0
                   ? ` (only ${combinedCapacity} free seats even combining every table).`
-                  : "."}
+                  : "."}{" "}
+                You can still reserve below to wait for tables to free up — bookings are
+                only refused if the branch can never fit your party.
               </p>
             ))}
+          <p className="mt-6">
+            <Link
+              to={`/reserve?branch=${id}${partySize === "" ? "" : `&party=${partySize}`}`}
+              className="inline-block rounded-lg bg-[#6B2A22] px-5 py-2.5 font-semibold text-white shadow-sm transition hover:bg-[#5a221b]"
+            >
+              Reserve at this branch
+            </Link>
+          </p>
         </div>
       </main>
     </>

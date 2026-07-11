@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { RequireCustomer } from "../lib/guards";
 import { api, ApiError } from "../lib/api";
-import type { Branch, Reservation } from "../lib/types";
+import type { Branch, Reservation, Tier } from "../lib/types";
 import { Header } from "../components/Header";
 
 export function meta() {
@@ -10,9 +10,17 @@ export function meta() {
 }
 
 function ReserveForm() {
+  // the "find your table" page links here with ?branch=..&party=..
+  // so the customer doesn't re-enter what they already told us
+  const [searchParams] = useSearchParams();
   const [branches, setBranches] = useState<Branch[] | null>(null);
   const [branchId, setBranchId] = useState<number | "">("");
-  const [partySize, setPartySize] = useState<number | "">(2);
+  const [partySize, setPartySize] = useState<number | "">(() => {
+    const p = Number(searchParams.get("party"));
+    return Number.isInteger(p) && p > 0 ? p : 2;
+  });
+  const [tiers, setTiers] = useState<Tier[] | null>(null);
+  const [tierId, setTierId] = useState<number | "">(""); // "" = decide when seated
   const [mode, setMode] = useState<"queue" | "slot">("queue");
   const [slotTime, setSlotTime] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -22,9 +30,23 @@ function ReserveForm() {
   useEffect(() => {
     api.get<Branch[]>("/api/branches").then((bs) => {
       setBranches(bs);
-      if (bs.length > 0) setBranchId(bs[0].branch_id);
+      const wanted = Number(searchParams.get("branch"));
+      if (bs.some((b) => b.branch_id === wanted)) setBranchId(wanted);
+      else if (bs.length > 0) setBranchId(bs[0].branch_id);
     });
+    // searchParams only matter on first render — the user takes over after
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (branchId === "") return;
+    setTiers(null);
+    setTierId(""); // a tier from another branch would be rejected
+    api
+      .get<Tier[]>(`/api/branches/${branchId}/tiers`)
+      .then(setTiers)
+      .catch(() => setTiers([])); // pricing is a nice-to-have; booking still works
+  }, [branchId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,8 +61,14 @@ function ReserveForm() {
         branch_id: branchId,
         party_size: partySize,
       };
+      if (tierId !== "") {
+        payload.tier_id = tierId;
+      }
       if (mode === "slot") {
-        payload.slot_time = new Date(slotTime).toISOString();
+        // send the datetime-local value as-is (local wall-clock time):
+        // the DB column is a plain TIMESTAMP, so "18:00" stays 18:00
+        // instead of being shifted to UTC
+        payload.slot_time = slotTime;
       }
       const res = await api.post<Reservation>("/api/reservations", payload);
       setResult(res);
@@ -68,6 +96,34 @@ function ReserveForm() {
           ))}
         </select>
       </label>
+      {tiers && tiers.length > 0 && (
+        <fieldset>
+          <legend>Buffet tier</legend>
+          {tiers.map((t) => (
+            <label key={t.tier_id}>
+              <input
+                type="radio"
+                name="tier"
+                checked={tierId === t.tier_id}
+                onChange={() => setTierId(t.tier_id)}
+              />
+              <span className="flex-1 font-medium text-gray-900">{t.name}</span>
+              <span className="text-sm text-gray-500">
+                ${t.price_per_head.toFixed(2)}/person · {t.duration_minutes} min
+              </span>
+            </label>
+          ))}
+          <label>
+            <input
+              type="radio"
+              name="tier"
+              checked={tierId === ""}
+              onChange={() => setTierId("")}
+            />
+            <span className="flex-1 text-gray-700">I&apos;ll decide when seated</span>
+          </label>
+        </fieldset>
+      )}
       <label>
         Party size
         <input

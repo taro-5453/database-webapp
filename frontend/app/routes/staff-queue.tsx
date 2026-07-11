@@ -61,7 +61,12 @@ function SeatDialog({
       setSeated(true);
       const ts = await api.get<Tier[]>("/api/staff/tiers");
       setTiers(ts);
-      if (ts.length > 0) setTierId(ts[0].tier_id);
+      // default to the tier the customer picked at booking, if any
+      if (entry.tier_id !== null && ts.some((t) => t.tier_id === entry.tier_id)) {
+        setTierId(entry.tier_id);
+      } else if (ts.length > 0) {
+        setTierId(ts[0].tier_id);
+      }
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to seat party");
     } finally {
@@ -213,6 +218,7 @@ function QueueList({ branchId }: { branchId: number }) {
               <span className="font-semibold">#{entry.queue_position}</span> —{" "}
               {entry.customer_name} ({entry.phone ?? "no phone"}) — party of{" "}
               {entry.party_size}
+              {entry.tier_name && ` — wants ${entry.tier_name}`}
             </span>
             {seatingId !== entry.reservation_id && (
               <button onClick={() => setSeatingId(entry.reservation_id)}>Seat</button>

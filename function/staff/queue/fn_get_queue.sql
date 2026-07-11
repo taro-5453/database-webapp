@@ -9,6 +9,9 @@
 -- customer_id is included so the "seat" flow can pass it straight
 -- into fn_open_session, which requires it explicitly and doesn't
 -- derive it from the reservation itself.
+-- tier_id/tier_name are the customer's preferred tier picked at
+-- booking (NULL = decide when seated) so the seating dialog can
+-- preselect it.
 -- ============================================================
 -- Adding a column changes the OUT-parameter row type, which
 -- CREATE OR REPLACE can't do in place — drop first (idempotent).
@@ -23,7 +26,9 @@ RETURNS TABLE (
     customer_id    INT,
     customer_name  VARCHAR,
     phone          VARCHAR,
-    party_size     INT
+    party_size     INT,
+    tier_id        INT,
+    tier_name      VARCHAR
 )
 LANGUAGE plpgsql
 AS $$
@@ -34,9 +39,12 @@ BEGIN
            r.customer_id,
            c.name  AS customer_name,
            c.phone,
-           r.party_size
+           r.party_size,
+           r.tier_id,
+           bt.name AS tier_name
     FROM reservation r
     JOIN customer c ON c.customer_id = r.customer_id
+    LEFT JOIN buffet_tier bt ON bt.tier_id = r.tier_id
     WHERE r.branch_id = p_branch_id
       AND r.status = 'queued'
     ORDER BY r.reservation_id ASC;

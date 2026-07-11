@@ -83,6 +83,8 @@ CREATE TABLE reservation (
     reservation_id SERIAL PRIMARY KEY,
     customer_id    INT NOT NULL REFERENCES customer(customer_id),
     branch_id      INT NOT NULL REFERENCES branch(branch_id),
+    tier_id        INT REFERENCES buffet_tier(tier_id),     -- nullable: preferred tier picked at booking;
+                                                            -- the session's tier (set at seating) is authoritative
     slot_time      TIMESTAMP,                               -- nullable: queued entries have no set time
     party_size     INT NOT NULL CHECK (party_size > 0),
     status         VARCHAR(20) NOT NULL DEFAULT 'reserved'

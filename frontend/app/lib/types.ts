@@ -65,6 +65,8 @@ export type QueueEntry = {
   customer_name: string;
   phone: string | null;
   party_size: number;
+  tier_id: number | null; // preferred tier picked at booking; null = decide when seated
+  tier_name: string | null;
 };
 
 export type Tier = {
