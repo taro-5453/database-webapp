@@ -208,8 +208,13 @@ function SessionsList() {
         return (
           <li key={s.session_id} className="card">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-gray-900">
-                Table {s.table_id} — {s.customer_name} ({s.guest_count} guests) — {s.tier_name}
+              <span className="flex items-center gap-3">
+                <span className="rounded-md bg-[#C1502F] px-2.5 py-1 text-sm font-bold text-white">
+                  Session #{s.session_id}
+                </span>
+                <span className="font-medium text-gray-900">
+                  Table {s.table_id} — {s.customer_name} ({s.guest_count} guests) — {s.tier_name}
+                </span>
               </span>
               <div className="flex items-center gap-3">
                 <span

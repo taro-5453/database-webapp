@@ -13,5 +13,6 @@ export default [
   route("branches/:id", "routes/branch-detail.tsx"),
   route("profile", "routes/profile.tsx"),
   route("reserve", "routes/reserve.tsx"),
+  route("session", "routes/find-session.tsx"),
   route("session/:id", "routes/dining-session.tsx"),
 ] satisfies RouteConfig;

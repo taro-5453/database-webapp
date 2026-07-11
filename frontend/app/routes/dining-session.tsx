@@ -87,7 +87,7 @@ function SessionContent({ sessionId }: { sessionId: number }) {
                 <div>
                   <p className="font-medium text-gray-900">{item.name}</p>
                   <p className="text-sm text-gray-500">
-                    {item.category} · ${item.price.toFixed(2)}
+                    {item.category} · ฿{item.price.toFixed(2)}
                   </p>
                 </div>
                 <button
@@ -116,7 +116,7 @@ function SessionContent({ sessionId }: { sessionId: number }) {
                 <li key={o.order_line_id} className="card flex items-center justify-between">
                   <span className="text-gray-900">
                     {o.quantity}x {o.item_name}{" "}
-                    <span className="text-sm text-gray-500">${o.line_total.toFixed(2)}</span>
+                    <span className="text-sm text-gray-500">฿{o.line_total.toFixed(2)}</span>
                   </span>
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyle[o.status] ?? "bg-gray-100 text-gray-700"}`}
@@ -137,15 +137,15 @@ function SessionContent({ sessionId }: { sessionId: number }) {
             <div className="card flex flex-col gap-2">
               <div className="flex justify-between text-sm text-gray-600">
                 <span>Buffet total ({bill.guest_count} guests)</span>
-                <span>${bill.buffet_total.toFixed(2)}</span>
+                <span>฿{bill.buffet_total.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm text-gray-600">
                 <span>Extra charges</span>
-                <span>${bill.extra_charges.toFixed(2)}</span>
+                <span>฿{bill.extra_charges.toFixed(2)}</span>
               </div>
               <div className="mt-2 flex justify-between border-t border-gray-200 pt-2 text-base font-semibold text-gray-900">
                 <span>Running total</span>
-                <span>${bill.running_total.toFixed(2)}</span>
+                <span>฿{bill.running_total.toFixed(2)}</span>
               </div>
             </div>
           )}

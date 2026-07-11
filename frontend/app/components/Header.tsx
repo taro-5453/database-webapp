@@ -23,6 +23,9 @@ export function Header() {
                   <Link to="/reserve" className="hover:text-white/80">
                     Reserve
                   </Link>
+                  <Link to="/session" className="hover:text-white/80">
+                    My session
+                  </Link>
                   <Link to="/profile" className="hover:text-white/80">
                     {user.name}
                   </Link>
