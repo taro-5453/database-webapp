@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { Header } from "../components/Header";
 import { RequireStaff } from "../lib/guards";
 import { api, ApiError } from "../lib/api";
-import type { ActiveSession, BillReceipt, PromotionValidation } from "../lib/types";
+import type { ActiveSession, BillReceipt, OrderLine, PromotionValidation } from "../lib/types";
 
 const POLL_INTERVAL_MS = 30_000;
 
@@ -25,6 +25,7 @@ function CheckoutDialog({
   const [checking, setChecking] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [receipt, setReceipt] = useState<BillReceipt | null>(null);
+  const [items, setItems] = useState<OrderLine[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -57,7 +58,12 @@ function CheckoutDialog({
           payment_method: paymentMethod,
         },
       );
-      setReceipt(await api.get<BillReceipt>(`/api/staff/bills/${res.bill_id}`));
+      const [billReceipt, orderLines] = await Promise.all([
+        api.get<BillReceipt>(`/api/staff/bills/${res.bill_id}`),
+        api.get<OrderLine[]>(`/api/staff/dining-sessions/${session.session_id}/orders`),
+      ]);
+      setItems(orderLines);
+      setReceipt(billReceipt);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to checkout");
     } finally {
@@ -84,7 +90,24 @@ function CheckoutDialog({
             </span>
             <span>฿{receipt.buffet_total.toFixed(2)}</span>
           </p>
-          <p className={row}>
+          {items.length > 0 && (
+            <div className="mt-2 flex flex-col gap-1 border-t border-gray-100 pt-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                Dishes ordered
+              </p>
+              {items.map((it) => (
+                <p key={it.order_line_id} className={`${row} text-xs`}>
+                  <span>
+                    {it.quantity}× {it.item_name}
+                  </span>
+                  <span className="text-gray-500">
+                    {it.line_total > 0 ? `฿${it.line_total.toFixed(2)}` : "included"}
+                  </span>
+                </p>
+              ))}
+            </div>
+          )}
+          <p className={`${row} mt-2`}>
             <span>Extra charges</span>
             <span>฿{receipt.extra_charges.toFixed(2)}</span>
           </p>
