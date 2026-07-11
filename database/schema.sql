@@ -77,15 +77,25 @@ CREATE TABLE tier_menu_item (
 );
 
 -- ---------- RESERVATION ----------
+-- No table FK here: a large party may need several tables combined,
+-- so the assignment lives in reservation_table (many-to-many).
 CREATE TABLE reservation (
     reservation_id SERIAL PRIMARY KEY,
     customer_id    INT NOT NULL REFERENCES customer(customer_id),
     branch_id      INT NOT NULL REFERENCES branch(branch_id),
-    table_id       INT REFERENCES dining_table(table_id),   -- nullable: queued walk-ins have no table yet
     slot_time      TIMESTAMP,                               -- nullable: queued entries have no set time
     party_size     INT NOT NULL CHECK (party_size > 0),
     status         VARCHAR(20) NOT NULL DEFAULT 'reserved'
                    CHECK (status IN ('reserved','queued','seated','cancelled','no_show'))
+);
+
+-- ---------- RESERVATION_TABLE (many-to-many: tables assigned to a reservation) ----------
+-- One row per table given to a party at seating time; a party of 12
+-- with only 6-seat tables gets two rows. Empty until staff seat them.
+CREATE TABLE reservation_table (
+    reservation_id INT NOT NULL REFERENCES reservation(reservation_id),
+    table_id       INT NOT NULL REFERENCES dining_table(table_id),
+    PRIMARY KEY (reservation_id, table_id)                  -- composite key
 );
 
 -- ---------- DINING_SESSION ----------

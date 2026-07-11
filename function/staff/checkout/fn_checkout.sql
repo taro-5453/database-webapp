@@ -21,6 +21,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
     v_table_id        INT;
+    v_reservation_id  INT;
     v_customer_id     INT;
     v_tier_id         INT;
     v_guest_count     INT;
@@ -37,8 +38,8 @@ DECLARE
     v_points_earned   INT;
 BEGIN
     -- lock the session row so two staff can't check out the same table twice at once
-    SELECT table_id, customer_id, tier_id, guest_count
-    INTO v_table_id, v_customer_id, v_tier_id, v_guest_count
+    SELECT table_id, reservation_id, customer_id, tier_id, guest_count
+    INTO v_table_id, v_reservation_id, v_customer_id, v_tier_id, v_guest_count
     FROM dining_session
     WHERE session_id = p_session_id AND status = 'active'
     FOR UPDATE;
@@ -103,7 +104,15 @@ BEGIN
     END IF;
 
     UPDATE dining_session SET status = 'closed', end_time = NOW() WHERE session_id = p_session_id;
-    UPDATE dining_table SET status = 'available' WHERE table_id = v_table_id;
+
+    -- free every table the party occupied: the session's own table
+    -- plus any extra combined tables assigned via reservation_table
+    UPDATE dining_table
+    SET status = 'available'
+    WHERE table_id = v_table_id
+       OR (v_reservation_id IS NOT NULL AND table_id IN
+           (SELECT table_id FROM reservation_table
+            WHERE reservation_id = v_reservation_id));
 
     RETURN v_bill_id;
 END;

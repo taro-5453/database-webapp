@@ -129,19 +129,29 @@ INSERT INTO promotion (staff_id, code, discount, discount_type, valid_until) VAL
 (2, 'SONGKRAN30', 30.00, 'percent', '2026-04-30');
 
 -- ---------- RESERVATION (12) : mix of reserved, queued, seated, cancelled, no_show ----------
-INSERT INTO reservation (customer_id, branch_id, table_id, slot_time, party_size, status) VALUES
-(1, 1, 2,   '2026-07-10 18:00:00', 4, 'reserved'),
-(2, 1, 4,   '2026-07-10 19:00:00', 6, 'reserved'),
-(3, 2, NULL, NULL,                 2, 'queued'),
-(4, 2, 7,   '2026-07-10 18:30:00', 6, 'seated'),
-(5, 3, 8,   '2026-07-11 12:00:00', 4, 'reserved'),
-(6, 3, NULL, NULL,                 3, 'queued'),
-(7, 4, 10,  '2026-07-09 20:00:00', 4, 'no_show'),
-(8, 1, 3,   '2026-07-08 18:00:00', 4, 'seated'),
-(9, 2, 6,   '2026-07-08 19:30:00', 4, 'seated'),
-(10,5, 11,  '2026-07-12 17:00:00', 2, 'reserved'),
-(11,1, NULL, NULL,                 2, 'cancelled'),
-(12,6, 12,  '2026-07-13 18:00:00', 6, 'reserved');
+-- Tables are no longer stored here: staff assign them at seating
+-- time through reservation_table (a party can combine several).
+INSERT INTO reservation (customer_id, branch_id, slot_time, party_size, status) VALUES
+(1, 1, '2026-07-10 18:00:00', 4, 'reserved'),
+(2, 1, '2026-07-10 19:00:00', 6, 'reserved'),
+(3, 2, NULL,                  2, 'queued'),
+(4, 2, '2026-07-10 18:30:00', 6, 'seated'),
+(5, 3, '2026-07-11 12:00:00', 4, 'reserved'),
+(6, 3, NULL,                  3, 'queued'),
+(7, 4, '2026-07-09 20:00:00', 4, 'no_show'),
+(8, 1, '2026-07-08 18:00:00', 4, 'seated'),
+(9, 2, '2026-07-08 19:30:00', 4, 'seated'),
+(10,5, '2026-07-12 17:00:00', 2, 'reserved'),
+(11,1, NULL,                  2, 'cancelled'),
+(12,6, '2026-07-13 18:00:00', 6, 'reserved');
+
+-- ---------- RESERVATION_TABLE : tables assigned to the seated parties ----------
+-- Only the 'seated' reservations above have tables yet; matches the
+-- dining_session rows below (reservation 4 -> table 7, 8 -> 3, 9 -> 6).
+INSERT INTO reservation_table (reservation_id, table_id) VALUES
+(4, 7),
+(8, 3),
+(9, 6);
 
 -- ---------- DINING_SESSION (10) ----------
 -- Some linked to a reservation, some pure walk-ins (reservation_id NULL)

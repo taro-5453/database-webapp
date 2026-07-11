@@ -2,28 +2,37 @@
 -- fn_seat_reservation
 -- Screen: Staff > Queue (the "seat this party" button)
 -- Used by: moving a waiting party (queued walk-in or timed
--- reservation) to a table: reservation -> 'seated' with the table
--- recorded, table -> 'occupied'.
--- This only assigns the table. Opening the buffet session (which
--- needs a tier + guest count) happens next via fn_open_session,
--- which accepts a reservation already seated at that table.
+-- reservation) to one OR MORE tables: rows go into
+-- reservation_table, reservation -> 'seated', tables -> 'occupied'.
+-- A big party can combine tables (e.g. 12 guests on two 6-seaters),
+-- so the capacity check is against the SUM of the chosen tables.
+-- This only assigns tables. Opening the buffet session (which
+-- needs a tier + guest count) happens next via fn_open_session.
 -- Returns the reservation_id.
 -- ============================================================
+-- The old (INT, INT, INT) single-table version must go: the
+-- argument types changed, so CREATE OR REPLACE would overload.
+DROP FUNCTION IF EXISTS fn_seat_reservation(INT, INT, INT);
+
 CREATE OR REPLACE FUNCTION fn_seat_reservation(
     p_reservation_id INT,
-    p_table_id       INT,
+    p_table_ids      INT[],
     p_staff_id       INT
 )
 RETURNS INT
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    v_branch_id    INT;
-    v_party_size   INT;
-    v_res_status   VARCHAR;
-    v_table_status VARCHAR;
-    v_capacity     INT;
+    v_branch_id      INT;
+    v_party_size     INT;
+    v_res_status     VARCHAR;
+    v_valid_count    INT;
+    v_total_capacity INT;
 BEGIN
+    IF p_table_ids IS NULL OR array_length(p_table_ids, 1) IS NULL THEN
+        RAISE EXCEPTION 'At least one table must be chosen';
+    END IF;
+
     SELECT r.branch_id, r.party_size, r.status
     INTO v_branch_id, v_party_size, v_res_status
     FROM reservation r
@@ -44,37 +53,45 @@ BEGIN
         RAISE EXCEPTION 'Staff % does not belong to branch %', p_staff_id, v_branch_id;
     END IF;
 
-    SELECT dt.status, dt.capacity INTO v_table_status, v_capacity
+    -- every chosen table must exist at this branch and be free;
+    -- DISTINCT guards against the same table passed twice
+    SELECT COUNT(*), COALESCE(SUM(dt.capacity), 0)
+    INTO v_valid_count, v_total_capacity
     FROM dining_table dt
-    WHERE dt.table_id = p_table_id AND dt.branch_id = v_branch_id;
+    WHERE dt.table_id = ANY(p_table_ids)
+      AND dt.branch_id = v_branch_id
+      AND dt.status = 'available';
 
-    IF v_table_status IS NULL THEN
-        RAISE EXCEPTION 'Table % does not exist at branch %', p_table_id, v_branch_id;
+    IF v_valid_count < (SELECT COUNT(DISTINCT t) FROM unnest(p_table_ids) AS t) THEN
+        RAISE EXCEPTION 'Some chosen tables do not exist at branch % or are not available',
+                        v_branch_id;
     END IF;
 
-    IF v_table_status <> 'available' THEN
-        RAISE EXCEPTION 'Table % is not available (status: %)', p_table_id, v_table_status;
+    IF v_total_capacity < v_party_size THEN
+        RAISE EXCEPTION 'Chosen tables seat only % combined (party of %)',
+                        v_total_capacity, v_party_size;
     END IF;
 
-    IF v_capacity < v_party_size THEN
-        RAISE EXCEPTION 'Table % seats only % (party of %)', p_table_id, v_capacity, v_party_size;
-    END IF;
+    INSERT INTO reservation_table (reservation_id, table_id)
+    SELECT p_reservation_id, t
+    FROM unnest(p_table_ids) AS t
+    GROUP BY t;
 
     UPDATE reservation
-    SET status = 'seated', table_id = p_table_id
+    SET status = 'seated'
     WHERE reservation_id = p_reservation_id;
 
     UPDATE dining_table
     SET status = 'occupied'
-    WHERE table_id = p_table_id;
+    WHERE table_id = ANY(p_table_ids);
 
     RETURN p_reservation_id;
 END;
 $$;
 
 -- Example call (queued party of 2 at branch 2 -> table 5):
--- SELECT fn_seat_reservation(3, 5, 3);
--- Example call (should FAIL: reservation 4 is already seated):
--- SELECT fn_seat_reservation(4, 5, 3);
--- Example call (should FAIL: table 6 is occupied):
--- SELECT fn_seat_reservation(3, 6, 3);
+-- SELECT fn_seat_reservation(3, ARRAY[5], 3);
+-- Example call (party of 12 combining two tables):
+-- SELECT fn_seat_reservation(1, ARRAY[2, 4], 1);
+-- Example call (should FAIL: tables too small combined):
+-- SELECT fn_seat_reservation(3, ARRAY[5], 3) where party > capacity;

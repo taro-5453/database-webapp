@@ -40,7 +40,10 @@ Customer (logged in)
 - `GET  /api/me/membership`      → {points, tier, ...}
 - `GET  /api/me/points`          → point transactions
 - `POST /api/reservations`       {branch_id, party_size} = join queue;
-                                 + slot_time (ISO), table_id? = timed booking → 201
+                                 + slot_time (ISO) = timed booking → 201
+                                 (400 if the party exceeds the branch's
+                                 combined table capacity; tables are
+                                 assigned by staff at seating time)
 - `GET  /api/dining-sessions/<id>/menu`     (403 if not your session)
 - `POST /api/dining-sessions/<id>/orders`   {item_id, quantity} → 201
 - `GET  /api/dining-sessions/<id>/orders`
@@ -48,7 +51,8 @@ Customer (logged in)
 
 Staff (staff login; branch is implied by the logged-in staff)
 - `GET   /api/staff/queue`                          waiting parties
-- `POST  /api/staff/reservations/<id>/seat`         {table_id}
+- `POST  /api/staff/reservations/<id>/seat`         {table_ids: [..]} — several
+                                                    tables combine for big parties
 - `POST  /api/staff/dining-sessions`                {table_id, customer_id, tier_id,
                                                     guest_count, reservation_id?} → 201
 - `GET   /api/staff/dining-sessions`                dashboard, minutes_remaining

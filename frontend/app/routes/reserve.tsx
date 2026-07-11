@@ -12,7 +12,7 @@ export function meta() {
 function ReserveForm() {
   const [branches, setBranches] = useState<Branch[] | null>(null);
   const [branchId, setBranchId] = useState<number | "">("");
-  const [partySize, setPartySize] = useState(2);
+  const [partySize, setPartySize] = useState<number | "">(2);
   const [mode, setMode] = useState<"queue" | "slot">("queue");
   const [slotTime, setSlotTime] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +74,9 @@ function ReserveForm() {
           type="number"
           min={1}
           value={partySize}
-          onChange={(e) => setPartySize(Number(e.target.value))}
+          onChange={(e) =>
+            setPartySize(e.target.value === "" ? "" : Number(e.target.value))
+          }
           required
         />
       </label>

@@ -27,11 +27,21 @@ def queue():
 @staff_required
 def seat_reservation(reservation_id: int):
     data = request.get_json(silent=True) or {}
-    table_id = int_field(data, "table_id")
+    # a big party can combine several tables, so this takes a list;
+    # a bare table_id is still accepted for single-table seatings
+    table_ids = data.get("table_ids")
+    if table_ids is None:
+        table_ids = [int_field(data, "table_id")]
+    if (
+        not isinstance(table_ids, list)
+        or not table_ids
+        or not all(isinstance(t, int) and not isinstance(t, bool) for t in table_ids)
+    ):
+        raise ApiError(400, "table_ids must be a non-empty list of integers")
     call_fn_scalar("fn_seat_reservation",
-                   reservation_id, table_id, session["staff_id"])
+                   reservation_id, table_ids, session["staff_id"])
     return jsonify({"reservation_id": reservation_id,
-                    "table_id": table_id,
+                    "table_ids": table_ids,
                     "status": "seated"})
 
 

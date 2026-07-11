@@ -62,7 +62,6 @@ def create_reservation():
     data = request.get_json(silent=True) or {}
     branch_id = int_field(data, "branch_id")
     party_size = int_field(data, "party_size")
-    table_id = int_field(data, "table_id", required=False)
 
     slot_time = None  # NULL slot_time = join the walk-in queue
     if data.get("slot_time"):
@@ -71,9 +70,12 @@ def create_reservation():
         except (TypeError, ValueError):
             raise ApiError(400, "slot_time must be ISO 8601, e.g. 2026-07-15T18:00:00")
 
+    # tables are assigned by staff at seating time (reservation_table),
+    # so no table_id here; the fn rejects parties the branch can't
+    # seat even combining every table
     reservation_id = call_fn_scalar(
         "fn_create_reservation",
-        session["customer_id"], branch_id, table_id, slot_time, party_size,
+        session["customer_id"], branch_id, slot_time, party_size,
     )
     status = "queued" if slot_time is None else "reserved"
     return jsonify({"reservation_id": reservation_id, "status": status}), 201
