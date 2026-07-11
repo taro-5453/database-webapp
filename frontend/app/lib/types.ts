@@ -115,3 +115,23 @@ export type PromotionValidation = {
   discount_type?: "percent" | "fixed";
   valid_until?: string | null;
 };
+
+export type BillReceipt = {
+  bill_id: number;
+  session_id: number;
+  customer_id: number;
+  customer_name: string;
+  branch_name: string;
+  table_id: number;
+  tier_name: string;
+  guest_count: number;
+  price_per_head: number;
+  buffet_total: number;
+  extra_charges: number;
+  discount_amount: number;
+  promotion_code: string | null;
+  final_total: number;
+  payment_method: string;
+  paid_at: string;
+  points_earned: number;
+};

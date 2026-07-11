@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { Header } from "../components/Header";
 import { RequireStaff } from "../lib/guards";
 import { api, ApiError } from "../lib/api";
-import type { ActiveSession, PromotionValidation } from "../lib/types";
+import type { ActiveSession, BillReceipt, PromotionValidation } from "../lib/types";
 
 const POLL_INTERVAL_MS = 30_000;
 
@@ -24,7 +24,7 @@ function CheckoutDialog({
   const [validation, setValidation] = useState<PromotionValidation | null>(null);
   const [checking, setChecking] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
-  const [result, setResult] = useState<{ bill_id: number } | null>(null);
+  const [receipt, setReceipt] = useState<BillReceipt | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -57,7 +57,7 @@ function CheckoutDialog({
           payment_method: paymentMethod,
         },
       );
-      setResult(res);
+      setReceipt(await api.get<BillReceipt>(`/api/staff/bills/${res.bill_id}`));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Failed to checkout");
     } finally {
@@ -65,16 +65,47 @@ function CheckoutDialog({
     }
   }
 
-  if (result) {
+  if (receipt) {
+    const row = "flex justify-between gap-6";
     return (
       <div className="mt-3 rounded-xl border border-green-200 bg-green-50 p-4">
-        <p className="text-green-800">
-          Checked out — Bill #{result.bill_id}
-          {validation?.is_valid &&
-            ` (${validation.discount_type === "percent" ? `${validation.discount}%` : `$${validation.discount}`} off applied)`}
-          .
-        </p>
-        <button onClick={onDone} className="mt-2">
+        <p className="font-semibold text-green-800">Paid — receipt #{receipt.bill_id}</p>
+        <div className="mx-auto mt-3 max-w-sm rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700">
+          <p className="text-center font-semibold text-gray-900">Momo Paradise {receipt.branch_name}</p>
+          <p className="text-center text-xs text-gray-500">
+            Table {receipt.table_id} · {receipt.customer_name} ·{" "}
+            {new Date(receipt.paid_at).toLocaleString()}
+          </p>
+          <hr className="my-3 border-dashed border-gray-300" />
+          <p className={row}>
+            <span>
+              {receipt.tier_name} buffet — {receipt.guest_count} × ฿
+              {receipt.price_per_head.toFixed(2)}
+            </span>
+            <span>฿{receipt.buffet_total.toFixed(2)}</span>
+          </p>
+          <p className={row}>
+            <span>Extra charges</span>
+            <span>฿{receipt.extra_charges.toFixed(2)}</span>
+          </p>
+          {receipt.discount_amount > 0 && (
+            <p className={`${row} text-green-700`}>
+              <span>Discount{receipt.promotion_code ? ` (${receipt.promotion_code})` : ""}</span>
+              <span>−฿{receipt.discount_amount.toFixed(2)}</span>
+            </p>
+          )}
+          <hr className="my-3 border-dashed border-gray-300" />
+          <p className={`${row} text-base font-semibold text-gray-900`}>
+            <span>Total</span>
+            <span>฿{receipt.final_total.toFixed(2)}</span>
+          </p>
+          <p className="mt-2 text-xs text-gray-500">
+            Paid by {receipt.payment_method}
+            {receipt.points_earned > 0 &&
+              ` · ${receipt.customer_name} earned ${receipt.points_earned} points`}
+          </p>
+        </div>
+        <button onClick={onDone} className="mt-3">
           Close
         </button>
       </div>
@@ -130,6 +161,10 @@ function SessionsList() {
   const [sessions, setSessions] = useState<ActiveSession[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [checkoutId, setCheckoutId] = useState<number | null>(null);
+  // mirrors checkoutId for the poll interval: while a checkout dialog
+  // is open we must NOT refresh, or the closed session drops out of
+  // the list and unmounts the dialog — taking the receipt with it
+  const checkoutIdRef = useRef<number | null>(null);
 
   const refresh = useCallback(async () => {
     try {
@@ -141,12 +176,24 @@ function SessionsList() {
 
   useEffect(() => {
     refresh();
-    const interval = setInterval(refresh, POLL_INTERVAL_MS);
+    const interval = setInterval(() => {
+      if (checkoutIdRef.current === null) refresh();
+    }, POLL_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [refresh]);
 
-  function finishCheckout() {
+  function startCheckout(sessionId: number) {
+    checkoutIdRef.current = sessionId;
+    setCheckoutId(sessionId);
+  }
+
+  function closeCheckout() {
+    checkoutIdRef.current = null;
     setCheckoutId(null);
+  }
+
+  function finishCheckout() {
+    closeCheckout();
     refresh();
   }
 
@@ -177,7 +224,7 @@ function SessionsList() {
                     : `${s.minutes_remaining} min left`}
                 </span>
                 {checkoutId !== s.session_id && (
-                  <button onClick={() => setCheckoutId(s.session_id)}>Checkout</button>
+                  <button onClick={() => startCheckout(s.session_id)}>Checkout</button>
                 )}
               </div>
             </div>
@@ -189,7 +236,7 @@ function SessionsList() {
               <CheckoutDialog
                 session={s}
                 onDone={finishCheckout}
-                onCancel={() => setCheckoutId(null)}
+                onCancel={closeCheckout}
               />
             )}
           </li>

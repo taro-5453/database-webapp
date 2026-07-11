@@ -65,6 +65,9 @@ Staff (staff login; branch is implied by the logged-in staff)
 - `POST  /api/staff/promotions`                     {code, discount, discount_type:
                                                     percent|fixed, valid_until?} → 201
 - `GET   /api/staff/promotions/validate?code=X`     → {is_valid, ...}
+- `GET   /api/staff/bills/<id>`                     receipt for a finished bill
+                                                    (customer/branch/tier, money
+                                                    breakdown, payment, points)
 - `POST  /api/staff/dining-sessions/<id>/checkout`  {promotion_code?, payment_method?}
                                                     → 201 {bill_id}
 
