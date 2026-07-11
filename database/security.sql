@@ -91,7 +91,7 @@ BEGIN
 END;
 $$;
 
--- Covered functions (27), by screen:
+-- Covered functions (28), by screen:
 --   auth:              fn_register_customer, fn_login_customer, fn_login_staff,
 --                      fn_get_session_owner (backend authorization helper)
 --   browse_branches:   fn_get_branches, fn_get_available_tables
@@ -104,10 +104,10 @@ $$;
 --   queue:             fn_get_queue, fn_seat_reservation
 --   manage_menu:       fn_add_menu_item, fn_update_item_availability, fn_get_menu_items
 --   manage_promotions: fn_create_promotion, fn_get_promotions
---   checkout:          fn_validate_promotion, fn_checkout
+--   checkout:          fn_validate_promotion, fn_checkout, fn_get_bill
 
 -- ---------- 4. Verify ----------
--- What momo_app is allowed to execute (expect the 27 fn_* rows).
+-- What momo_app is allowed to execute (expect the 28 fn_* rows).
 -- Filtered to fn_* because on hosted Postgres (Render) the pgcrypto
 -- helper functions are owned by the postgres superuser, so our
 -- REVOKE cannot strip PUBLIC's EXECUTE on them — harmless: they are
