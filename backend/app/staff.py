@@ -183,3 +183,11 @@ def get_bill(bill_id: int):
     if not rows:
         raise ApiError(404, f"bill {bill_id} does not exist")
     return jsonify(rows[0])
+
+
+@bp.get("/dining-sessions/<int:session_id>/orders")
+@staff_required
+def session_orders(session_id: int):
+    """Every dish ordered in a session (for the itemized receipt).
+    Reuses fn_get_session_orders; works on closed sessions too."""
+    return jsonify(call_fn("fn_get_session_orders", session_id))
