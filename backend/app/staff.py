@@ -173,3 +173,13 @@ def checkout(session_id: int):
         str_field(data, "payment_method", required=False) or "cash",
     )
     return jsonify({"bill_id": bill_id}), 201
+
+
+@bp.get("/bills/<int:bill_id>")
+@staff_required
+def get_bill(bill_id: int):
+    """The receipt for a finished bill (shown after checkout)."""
+    rows = call_fn("fn_get_bill", bill_id)
+    if not rows:
+        raise ApiError(404, f"bill {bill_id} does not exist")
+    return jsonify(rows[0])

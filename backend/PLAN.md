@@ -87,6 +87,7 @@ Goal: the remaining staff CRUD, finishing the API surface.
 - `GET/POST /api/staff/promotions` → fn_get_promotions / fn_create_promotion
 - `GET   /api/staff/promotions/validate?code=X` → fn_validate_promotion
 - `POST  /api/staff/dining-sessions/<id>/checkout` → fn_checkout
+- `GET   /api/staff/bills/<id>` → fn_get_bill (the receipt shown after checkout)
 - Done when: order lifecycle (ordered→preparing→served) and a full
   checkout with a promotion code work via curl.
 

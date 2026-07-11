@@ -119,6 +119,14 @@ Nothing code-related is blocking.
   - example calls in all function files are now COMMENTED OUT (they used to be live SQL,
     which would run/fail when executing whole files) — select + run them manually in DataGrip
 
+- Receipt after checkout (was a gap: bill row was written but unreadable):
+  - fn_get_bill (fn #28, verify.sh expects 28) + GET /api/staff/bills/<id>
+  - CheckoutDialog now renders an itemized receipt (buffet/extras/discount/total,
+    payment, points earned); dashboard polling PAUSES while the dialog is open
+    (the 30s refresh used to unmount the receipt seconds after checkout)
+- MUIC demo branch (id 26) ready: 2 tiers, 14 items, 4 tables, staff login
+  "MUIC Manager"/password123; full flow dry-run twice; all rehearsal/test rows cleaned
+
 ## Next / To Do
 - Update add SQL functions to Render (can now use ./script/deploy.sh)
 - Remaining functions (by screen):
